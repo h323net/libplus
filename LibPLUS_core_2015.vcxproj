@@ -61,14 +61,14 @@
     <OutDir>$(SolutionDir)bin\$(Platform)\</OutDir>
     <IntDir>$(OutDir)$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
-    <IncludePath>include;..\..\..\ptlib\include;..\..\include;$(IncludePath)</IncludePath>
+    <IncludePath>include;..\ptlib\include;..\ptlib\lib\$(Platform)\include;..\h323plus\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\ptlib\lib;..\..\lib\vs2015\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)bin\$(Platform)\</OutDir>
     <IntDir>$(OutDir)$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)d</TargetName>
-    <IncludePath>include;..\..\..\ptlib\include;..\..\include;$(IncludePath)</IncludePath>
+    <IncludePath>include;..\ptlib\include;..\ptlib\lib\$(Platform)\include;..\h323plus\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\ptlib\lib;..\..\lib\vs2015\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

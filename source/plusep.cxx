@@ -532,7 +532,6 @@ PBoolean PlusEndPoint::InitialiseEndpoint()
     PTRACE(2, "EP\tInitialising EndPoint");
     PDirectory m_libPath;
     PPluginManager & pluginMgr = PPluginManager::GetPluginManager();
-    pluginMgr.LoadPluginDirectory(m_libPath);
 
     m_configFile = m_libPath + pathExcept;
     m_configList = GetConfigurationSections();
@@ -870,6 +869,7 @@ PBoolean PlusEndPoint::InitialiseMediaEncryption()
 #ifdef H323_H235_AES256
        EncryptionCacheInitialise();
 #endif
+       return true;
 }
 #endif
 
@@ -939,7 +939,11 @@ void PlusEndPoint::InitialiseDebug()
                 if (caps.controls.size() > 0) {
                     PTRACE(4, "EP\t  Camera Controls");
                     for (std::list<PVideoControlInfo>::const_iterator r = caps.controls.begin(); r != caps.controls.end(); ++r) {
+#if PTLIB_VER >= 2140
+                        PTRACE(4, "EP\tType " << r->GetType() << " step: " << r->GetStep());
+#else
                         PTRACE(4, "EP\tType " << r->m_type << " Max: " << r->m_max << " Min: " << r->m_min << " step: " << r->m_step);
+#endif
                     }
                 }
             }

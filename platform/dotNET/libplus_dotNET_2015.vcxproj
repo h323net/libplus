@@ -51,15 +51,15 @@
     <OutDir>$(SolutionDir)bin\$(Platform)\</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)d</TargetName>
-    <IncludePath>..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\bin\$(Platform);..\..\..\..\ptlib\lib;..\..\..\lib\$(PlatformToolset)\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\bin\$(Platform);..\..\..\ptlib\lib;..\..\..\h323plus\lib\$(PlatformToolset)\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Platform)\</OutDir>
     <IntDir>$(OutDir)$(Configuration)\</IntDir>
-    <IncludePath>..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\bin\$(Platform);..\..\..\..\ptlib\lib;..\..\..\lib\$(PlatformToolset)\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\bin\$(Platform);..\..\..\ptlib\lib;..\..\..\h323plus\lib\$(PlatformToolset)\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
