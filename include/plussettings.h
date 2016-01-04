@@ -90,7 +90,7 @@ static PString defDBSectVar     = "variables";
 #if _WIN32  
 #define defdrvvideorec        "DirectShow"
 #define defdrvvideoplay       "Window"
-#define defdrvaudiorec        "WASAPI" //"WindowsMultimedia" //"DirectSound"  "WASAPI"
+#define defdrvaudiorec        "WindowsMultimedia" //"DirectSound"  "WASAPI"
 #define defdrvaudioplay       "WindowsMultimedia" //"DirectSound"  "WASAPI"
 #define defApplicationDriver  "Application";
 #endif
