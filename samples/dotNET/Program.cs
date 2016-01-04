@@ -28,6 +28,7 @@ namespace libPLUS_CSharp
             plus.curdrvvideoplay = "Window";
             plus.curdrvaudiorec = "WindowsMultimedia";
             plus.curdrvaudioplay = "WindowsMultimedia";
+            plus.encryptMediaHigh = "1";
             plus.autoanswer = "1";
             plus.quality = "3";
 
@@ -51,7 +52,7 @@ namespace libPLUS_CSharp
                 }
 
                 if (a.Substring(0, 1) == "c") 
-                    plus.placeCall(a.Substring(3));
+                    plus.placeCall(a.Substring(2));
   
             }
 
