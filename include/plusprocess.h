@@ -79,6 +79,13 @@ public:
 
         e_encryptsignal = 101,
         e_encryptmedia,
+        e_encryptmediahigh,
+
+        // Internal Use Only
+        e_dhOID,
+        e_dhPrime,
+        e_dhGenerator,
+
         e_userSetting = 1000
         // IMPL: Setting Names Here
     };

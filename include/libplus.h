@@ -89,8 +89,15 @@ public:
         e_secondVideo,
         e_encryptSignal = 101,
         e_encryptMedia,
+        e_encryptMediaHigh,
+
+        // Internal settings
         e_storageName   = 991,
         e_storageKey,
+        e_dhOID,
+        e_dhPrime,
+        e_dhGenerator,
+
         e_userDefinedSetting = 1000     
         // IMPL: Setting Names Here
     };

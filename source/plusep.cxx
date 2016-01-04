@@ -24,6 +24,8 @@
 
 #include <ptclib/pdns.h>
 
+#include <h235/h235support.h>
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities
 
@@ -233,6 +235,13 @@ void PlusEndPoint::InitialiseSettings()
 
     INIT_SET(encryptsignal, "1") 
     INIT_SET(encryptmedia, "1")
+    INIT_SET(encryptmediahigh, "0")
+
+    // Internal Use Only
+    INIT_SET(dhOID, "")
+    INIT_SET(dhPrime, "")
+    INIT_SET(dhGenerator, "")
+
     // IMPL: Setting Names here!
 
 }
@@ -498,6 +507,8 @@ void PlusEndPoint::Initialise()
         success = false;
     else if (!m_server.IsEmpty())
         success = RegisterGatekeeper();
+//    else
+//       success = InitialiseGateway();
 
     if (success) {
         PlusSetValue(initialised, 1);
@@ -598,10 +609,17 @@ PBoolean PlusEndPoint::InitialiseEndpoint()
     PTRACE(2, "EP\tLoaded Codecs: " << capabilities);
 
 #ifdef H323_H235
-    SetH235MediaEncryption(encyptRequest, encypt128);
-    const char * defaulth235codecs[] = { "G.722", "G.711", "G.729", "G.723", "H.264", "H.261" };
-    PStringArray h235codecs(sizeof(defaulth235codecs) / sizeof(defaulth235codecs[0]), defaulth235codecs);
-    H235Capabilities::SetH235Codecs(h235codecs);
+    if (m_encryptmedia.AsInteger() == 1) {
+        InitialiseMediaEncryption();
+        const char * defaulth235codecs[] = { "G.722", "G.711", "G.729", "G.723", "H.264", "H.261" };
+        PStringArray h235codecs(sizeof(defaulth235codecs) / sizeof(defaulth235codecs[0]), defaulth235codecs);
+        H235Capabilities::SetH235Codecs(h235codecs);
+    }
+#endif
+
+#ifdef H323_TLS
+    if (m_encryptsignal.AsInteger() == 1)
+        InitialiseSignallingEncryption();
 #endif
 
     PString iface = PIPSocket::GetGatewayInterfaceAddress(4);
@@ -808,8 +826,7 @@ void PlusEndPoint::HandleSettingChange(PlusProcess::Setting setting, const PStri
         default: 
             // Save settings
             if (dftValue != "*") {  // Initialise Save
-                if (!m_dataStore.HasKey(defDBSectVar, name))
-                    m_dataStore.GetString(defDBSectVar, name, dftValue);  // Insert new record
+               dftValue = m_dataStore.GetString(defDBSectVar, name, dftValue); 
             } else  // General Save
                m_dataStore.SetString(defDBSectVar, name, value);
             break;
@@ -857,21 +874,59 @@ PBoolean PlusEndPoint::InitialiseSignallingEncryption()
 #endif
 
 #ifdef H323_H235
-PBoolean PlusEndPoint::InitialiseMediaEncryption()
-{
-#ifdef H323_H235_AES256
-        H235MediaCipher ncipher = encypt192;
-        unsigned maxtoken = 2048;
-#else
-        H235MediaCipher ncipher = encypt128;
-        unsigned maxtoken = 1024;
-#endif
-        SetH235MediaEncryption(encyptRequest, ncipher, maxtoken);
 
 #ifdef H323_H235_AES256
+PBoolean GenerateDHParameters(PStringToString & param)
+{
+    PTRACE(4, "H235_DH\tDH Generation started.");
+    PTimeInterval start = PTimer::Tick();
+    H235_DiffieHellman::Generate(1536,2,param);
+    PTimeInterval lapse = PTimer::Tick() - start;
+    PTRACE(4, "H235_DH\tDH Generation complete " << lapse.GetSeconds() << "sec.");
+    return (param.GetSize() > 0);
+}
+#endif
+
+
+PBoolean PlusEndPoint::InitialiseMediaEncryption()
+{
+    H235MediaCipher ncipher;
+    unsigned maxtoken;
+
+#ifdef H323_H235_AES256
+    if (m_encryptmediahigh.AsInteger() == 1) {
+        // Create the DH parameters
+        if (m_dhOID.IsEmpty()) {
+            PStringToString params;
+            if (GenerateDHParameters(params)) {
+                set_dhOID(params["OID"]);
+                set_dhPrime(params["PRIME"]);
+                set_dhGenerator(params["GENERATOR"]);
+            }
+        }
+
+        PBYTEArray lprime;
+        PBYTEArray lgenerator;
+        PBase64::Decode(m_dhPrime, lprime);
+        PBase64::Decode(m_dhGenerator, lgenerator);
+        H235Authenticators::LoadDHData(m_dhOID, lprime, lgenerator);
+
+        ncipher = encypt192;
+        maxtoken = 2048;
+    } else
+#endif    
+    {
+        ncipher = encypt128;
+        maxtoken = 1024;
+    }
+
+    SetH235MediaEncryption(encyptRequest, ncipher, maxtoken);
+#ifdef H323_H235_AES256
+    if (m_encryptmediahigh.AsInteger() == 1)
        EncryptionCacheInitialise();
 #endif
-       return true;
+
+    return true;
 }
 #endif
 

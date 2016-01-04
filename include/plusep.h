@@ -134,8 +134,14 @@ public:
     PlusSetting(listenport)
     PlusSetting(secondVideo)
 
-    PlusSetting(encryptsignal);
-    PlusSetting(encryptmedia);
+    PlusSetting(encryptsignal)
+    PlusSetting(encryptmedia)
+    PlusSetting(encryptmediahigh)
+
+    // Internal Use Only
+    PlusSetting(dhOID)
+    PlusSetting(dhPrime)
+    PlusSetting(dhGenerator)
     // IMPL: Setting Names here
 
 

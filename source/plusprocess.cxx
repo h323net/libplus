@@ -223,6 +223,7 @@ void PlusProcess::SetSetting(Setting set, const PString & value)
         PlusProcessSetSetting(secondVideo)
         PlusProcessSetSetting(encryptsignal)
         PlusProcessSetSetting(encryptmedia)
+        PlusProcessSetSetting(encryptmediahigh)
         // IMPL: Setting Names Here
     default:
         break;
@@ -285,6 +286,7 @@ PString PlusProcess::GetSetting(Setting set)
 
         PlusProcessGetSetting(encryptsignal)
         PlusProcessGetSetting(encryptmedia)
+        PlusProcessGetSetting(encryptmediahigh)
         // IMPL: Setting Names Here
     default: break;
     }
