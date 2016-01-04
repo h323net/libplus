@@ -253,6 +253,7 @@ namespace libplus {
             libNETSetting(listenport)
             libNETSetting(encryptSignal)
             libNETSetting(encryptMedia)
+            libNETSetting(encryptMediaHigh)
             // IMPL: Setting Name here
 
 
