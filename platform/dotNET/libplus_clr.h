@@ -168,7 +168,7 @@ namespace libplus {
     libNETEventDel1(presenceSupport)
     libNETEventDel(duplicate)
     libNETEventDel1(forwardCall)
-    // IMPL: Add event here
+    // IMPL: Event Name here
 
 	public ref class libPLUS
 	{
@@ -196,7 +196,7 @@ namespace libplus {
                 libNETInitial(presenceSupport)
                 libNETInitial(duplicate)
                 libNETInitial(forwardCall)
-                // IMPL: Add event here
+                // IMPL: Event Name here
             }
 
         protected:
@@ -253,7 +253,7 @@ namespace libplus {
             libNETSetting(listenport)
             libNETSetting(encryptSignal)
             libNETSetting(encryptMedia)
-            // IMPL: Add setting here
+            // IMPL: Setting Name here
 
 
             // Methods
@@ -268,7 +268,7 @@ namespace libplus {
             libNETMethod0(realTimeTextNewLine)
             libNETMethod1(secondCall)
             libNETMethod0(stop)
-            // IMPL: Add method here
+            // IMPL: Method Name here
 
                 // Events
             //    libNETEvent(progress);
@@ -287,7 +287,7 @@ namespace libplus {
             libNETEvent1(presenceSupport)
             libNETEvent(duplicate)
             libNETEvent1(forwardCall)
-            // IMPL: Add event here
+            // IMPL: Event Name here
 
 
         private:

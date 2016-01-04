@@ -220,9 +220,10 @@ void PlusProcess::SetSetting(Setting set, const PString & value)
         //PlusProcessSetSetting(initialised)
         PlusProcessSetSetting(language)
         PlusProcessSetSetting(listenport)
+        PlusProcessSetSetting(secondVideo)
         PlusProcessSetSetting(encryptsignal)
         PlusProcessSetSetting(encryptmedia)
-        // IMPL: Add PlusProcessSetSetting Macro Here
+        // IMPL: Setting Names Here
     default:
         break;
     }
@@ -280,9 +281,11 @@ PString PlusProcess::GetSetting(Setting set)
         PlusProcessGetSetting(initialised)
         PlusProcessGetSetting(language)
         PlusProcessGetSetting(listenport)
+        PlusProcessGetSetting(secondVideo)
+
         PlusProcessGetSetting(encryptsignal)
         PlusProcessGetSetting(encryptmedia)
-        // IMPL: Add PlusProcessGetSetting Macro Here
+        // IMPL: Setting Names Here
     default: break;
     }
     return PString();
@@ -311,7 +314,7 @@ void PlusProcess::InternalDoMethod(Method id, const PString & p1, const PString 
         PlusProcessMethod(h281return)
         PlusProcessMethod(secondcall)
         PlusProcessMethod(stop) 
-        // IMPL: Add PlusProcessMethod Macro Here
+        // IMPL: Method Names Here
     }
 }
 

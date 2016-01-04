@@ -132,11 +132,11 @@ public:
     PlusSetting(initialised)
     PlusSetting(language)
     PlusSetting(listenport)
-
+    PlusSetting(secondVideo)
 
     PlusSetting(encryptsignal);
     PlusSetting(encryptmedia);
-    // IMPL: add your settings here
+    // IMPL: Setting Names here
 
 
     // Method macros
@@ -152,7 +152,7 @@ public:
     PlusMethod(start) { Initialise(); }
     PlusMethod(stop) { UnInitialise(); }
     PlusMethod(secondcall) {};
-    // IMPL: add your methods here
+    // IMPL: Method Names here
 
     // Event macros
     PlusEvent2(status);
@@ -170,7 +170,7 @@ public:
     PlusEvent1(presence);
     PlusEvent(duplicate);
     PlusEvent1(forwardcall);
-    // IMPL: add your events here
+    // IMPL: Event Names here
 
 
     // overrides from h323plus

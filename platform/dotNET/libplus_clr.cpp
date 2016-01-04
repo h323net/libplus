@@ -35,7 +35,7 @@ void CLR_PLUSdevice::Event(int evtID, const char * p1, const char * p2, const ch
         libNETEVT1(presenceSupport)
         libNETEVT(duplicate)
         libNETEVT1(forwardCall)
-        // IMPL: Add event here
+        // IMPL: Event Name here
         default: break;
     }
 };

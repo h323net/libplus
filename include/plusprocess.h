@@ -75,10 +75,12 @@ public:
         e_initialised,
         e_language,
         e_listenport,
+        e_secondVideo,
+
         e_encryptsignal = 101,
         e_encryptmedia,
         e_userSetting = 1000
-        // IMPL: Add Setting Names Here
+        // IMPL: Setting Names Here
     };
 
     enum Method {
@@ -94,7 +96,7 @@ public:
         e_secondcall,
         e_stop,
         e_userMethod = 1000
-        // IMPL: Add Method Names Here
+        // IMPL: Method Names Here
     };
 
     enum Event {
@@ -114,7 +116,7 @@ public:
         e_duplicate,
         e_forwardcall,
         e_userEvent = 1000
-        // IMPL: Add Event Names Here
+        // IMPL: Event Names Here
     };
 
     void    SetSetting(Setting set, const PString & value);

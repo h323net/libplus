@@ -229,11 +229,12 @@ void PlusEndPoint::InitialiseSettings()
     INIT_SET(initialised, "0") 
     INIT_SET(language, defLanguage)
     INIT_SET(listenport, defListenport)
+    INIT_SET(secondVideo, "0")
 
     INIT_SET(encryptsignal, "1") 
     INIT_SET(encryptmedia, "1")
+    // IMPL: Setting Names here!
 
-    // IMPL: Add variable initialiser here!
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -497,8 +498,6 @@ void PlusEndPoint::Initialise()
         success = false;
     else if (!m_server.IsEmpty())
         success = RegisterGatekeeper();
-//    else
-//        success = InitialiseGateway();
 
     if (success) {
         PlusSetValue(initialised, 1);
@@ -572,10 +571,13 @@ PBoolean PlusEndPoint::InitialiseEndpoint()
 #endif
 
     capabilities.Remove("G.722.1-24");
-    capabilities.Remove("h.239*");
-    RemoveCapability(H323Capability::e_ExtendVideo);
-    RemoveCapability(H323Capability::e_GenericControl);
-    RemoveCapability(H323Capability::e_ConferenceControl);
+
+    if (!m_secondVideo.AsInteger()) {
+        capabilities.Remove("h.239*");
+        RemoveCapability(H323Capability::e_ExtendVideo);
+        RemoveCapability(H323Capability::e_GenericControl);
+        RemoveCapability(H323Capability::e_ConferenceControl);
+    }
 
     PStringArray order;
     order.AppendString("G.722.1-32");

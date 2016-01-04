@@ -86,12 +86,13 @@ public:
         e_initialised,
         e_language,
         e_listenport,
+        e_secondVideo,
         e_encryptSignal = 101,
         e_encryptMedia,
-        e_storageName   = 201,
+        e_storageName   = 991,
         e_storageKey,
         e_userDefinedSetting = 1000     
-        // IMPL: Add Setting Names Here
+        // IMPL: Setting Names Here
     };
 
     /* Method
@@ -111,7 +112,7 @@ public:
         e_secondCall,
         e_stop,
         e_userDefinedMethod = 1000
-        // IMPL: Add Method Names Here
+        // IMPL: Method Names Here
     };
 
     /* Event
@@ -135,7 +136,7 @@ public:
         e_duplicate,
         e_forwardCall,
         e_userDefinedEvent = 1000 
-        // IMPL: Add Event Names Here
+        // IMPL: Event Names Here
     };
 
     /* Set_Value
