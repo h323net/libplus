@@ -22,12 +22,12 @@ namespace libPLUS_CSharp
             plus.incomingcall += plus_incomingcall;
 
 
+            // Initialisation Settings
             plus.tracing = "6";
-            plus.curdrvvideorec = "Application";
-           // plus.videorec = "Desktop";
-            plus.curdrvvideoplay = "NULLOutput";
-           // plus.audiorec = "Console Capture";
-            plus.curdrvaudioplay = "NullAudio";
+            plus.curdrvvideorec = "DirectShow";
+            plus.curdrvvideoplay = "Window";
+            plus.curdrvaudiorec = "WindowsMultimedia";
+            plus.curdrvaudioplay = "WindowsMultimedia";
             plus.autoanswer = "1";
             plus.quality = "3";
 
