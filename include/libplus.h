@@ -118,6 +118,7 @@ public:
         e_realTimeTextNewLine,
         e_secondCall,
         e_stop,
+        e_dhParameters,
         e_userDefinedMethod = 1000
         // IMPL: Method Names Here
     };
@@ -142,6 +143,7 @@ public:
         e_presenceSupport,
         e_duplicate,
         e_forwardCall,
+        e_dhGenerate,
         e_userDefinedEvent = 1000 
         // IMPL: Event Names Here
     };

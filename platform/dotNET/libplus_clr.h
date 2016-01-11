@@ -63,6 +63,8 @@ public:
     libNETCLR1(presenceSupport)
     libNETCLR(duplicate)
     libNETCLR1(forwardCall)
+    libNETCLR1(dhGenerate)
+    // IMPL: Event Name here
 
 protected:
 
@@ -168,6 +170,7 @@ namespace libplus {
     libNETEventDel1(presenceSupport)
     libNETEventDel(duplicate)
     libNETEventDel1(forwardCall)
+    libNETEventDel1(dhGenerate)
     // IMPL: Event Name here
 
 	public ref class libPLUS
@@ -196,6 +199,7 @@ namespace libplus {
                 libNETInitial(presenceSupport)
                 libNETInitial(duplicate)
                 libNETInitial(forwardCall)
+                libNETInitial(dhGenerate)
                 // IMPL: Event Name here
             }
 
@@ -269,6 +273,7 @@ namespace libplus {
             libNETMethod0(realTimeTextNewLine)
             libNETMethod1(secondCall)
             libNETMethod0(stop)
+            libNETMethod0(dhParameters)
             // IMPL: Method Name here
 
                 // Events
@@ -288,6 +293,7 @@ namespace libplus {
             libNETEvent1(presenceSupport)
             libNETEvent(duplicate)
             libNETEvent1(forwardCall)
+            libNETEvent1(dhGenerate);
             // IMPL: Event Name here
 
 

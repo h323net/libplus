@@ -102,6 +102,7 @@ public:
         e_h281return,
         e_secondcall,
         e_stop,
+        e_dhParameters,
         e_userMethod = 1000
         // IMPL: Method Names Here
     };
@@ -122,6 +123,7 @@ public:
         e_presence,
         e_duplicate,
         e_forwardcall,
+        e_dhGenerate,
         e_userEvent = 1000
         // IMPL: Event Names Here
     };

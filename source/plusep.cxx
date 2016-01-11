@@ -887,6 +887,25 @@ PBoolean GenerateDHParameters(PStringToString & param)
 }
 #endif
 
+void PlusEndPoint::ThreadGenerate(PThread &, INT)
+{
+    fire_dhGenerate("1");
+    PStringToString params;
+    if (GenerateDHParameters(params)) {
+        set_dhOID(params["OID"]);
+        set_dhPrime(params["PRIME"]);
+        set_dhGenerator(params["GENERATOR"]);
+    }
+    fire_dhGenerate("0");
+}
+
+void PlusEndPoint::GenerateParameters()
+{
+    m_generateThread = PThread::Create(PCREATE_NOTIFIER(ThreadGenerate), 0,
+        PThread::AutoDeleteThread,
+        PThread::NormalPriority,
+        "plusep:%x");
+}
 
 PBoolean PlusEndPoint::InitialiseMediaEncryption()
 {
@@ -895,21 +914,14 @@ PBoolean PlusEndPoint::InitialiseMediaEncryption()
 
 #ifdef H323_H235_AES256
     if (m_encryptmediahigh.AsInteger() == 1) {
-        // Create the DH parameters
-        if (m_dhOID.IsEmpty()) {
-            PStringToString params;
-            if (GenerateDHParameters(params)) {
-                set_dhOID(params["OID"]);
-                set_dhPrime(params["PRIME"]);
-                set_dhGenerator(params["GENERATOR"]);
-            }
+        // Load the DH parameters if present
+        if (!m_dhOID) {
+            PBYTEArray lprime;
+            PBYTEArray lgenerator;
+            PBase64::Decode(m_dhPrime, lprime);
+            PBase64::Decode(m_dhGenerator, lgenerator);
+            H235Authenticators::LoadDHData(m_dhOID, lprime, lgenerator);
         }
-
-        PBYTEArray lprime;
-        PBYTEArray lgenerator;
-        PBase64::Decode(m_dhPrime, lprime);
-        PBase64::Decode(m_dhGenerator, lgenerator);
-        H235Authenticators::LoadDHData(m_dhOID, lprime, lgenerator);
 
         ncipher = encypt192;
         maxtoken = 2048;

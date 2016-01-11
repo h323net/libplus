@@ -151,13 +151,14 @@ public:
     PlusMethod(answer) { AnswerCall(); }
     PlusMethod(dtmf) { DTMF(p1); }
     PlusMethod(fecc) { FECC(p1, p2, p3); }
-    PlusMethod(h281text) {};
-    PlusMethod(h281return) {};
+    PlusMethod(h281text) {}
+    PlusMethod(h281return) {}
     PlusMethod(h284instruction) { SendH284Instruction((int)p1.AsInteger(), (int)p2.AsInteger(), (int)p3.AsInteger()); }
 
     PlusMethod(start) { Initialise(); }
     PlusMethod(stop) { UnInitialise(); }
-    PlusMethod(secondcall) {};
+    PlusMethod(secondcall) {}
+    PlusMethod(dhParameters) { GenerateParameters(); }
     // IMPL: Method Names here
 
     // Event macros
@@ -176,6 +177,7 @@ public:
     PlusEvent1(presence);
     PlusEvent(duplicate);
     PlusEvent1(forwardcall);
+    PlusEvent1(dhGenerate);
     // IMPL: Event Names here
 
 
@@ -248,6 +250,9 @@ protected:
 
 #ifdef H323_H235   
     PBoolean InitialiseMediaEncryption();
+#ifdef H323_H235_AES256
+    void GenerateParameters();
+#endif
 #endif
 
 #ifdef PTRACING
@@ -311,6 +316,11 @@ private:
 
 #ifdef H224_H281
     PMutex      m_feccMutex;                    // FECC MUTEX
+#endif
+
+#ifdef H323_H235_AES256
+    PThread *       m_generateThread;
+    PDECLARE_NOTIFIER(PThread, PlusEndPoint, ThreadGenerate);
 #endif
 
     PBoolean    m_endpointIsSetup;

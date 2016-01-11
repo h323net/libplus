@@ -20,6 +20,7 @@ namespace libPLUS_CSharp
             plus.encryption += plus_encryption;
             plus.incall += plus_incall;
             plus.incomingcall += plus_incomingcall;
+            plus.dhGenerate += plus_dhGenerate;
 
 
             // Initialisation Settings
@@ -100,6 +101,11 @@ namespace libPLUS_CSharp
         private static void plus_isinitialised(string p1)
         {
             Console.WriteLine("Initialised: {0}", p1);
+        }
+
+        private static void plus_dhGenerate(string p1)
+        {
+            Console.WriteLine("DH Generate: {0}", p1);
         }
     }
 }

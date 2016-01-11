@@ -316,6 +316,7 @@ void PlusProcess::InternalDoMethod(Method id, const PString & p1, const PString 
         PlusProcessMethod(h281return)
         PlusProcessMethod(secondcall)
         PlusProcessMethod(stop) 
+        PlusProcessMethod(dhParameters)
         // IMPL: Method Names Here
     }
 }
