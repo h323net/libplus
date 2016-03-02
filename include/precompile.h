@@ -19,7 +19,8 @@
 */
 
 
-#pragma once
+#ifndef _LIBPLUS_PRECOMPILE_H
+#define _LIBPLUS_PRECOMPILE_H
 
 #include <string>
 
@@ -54,6 +55,7 @@
     #endif
 #endif
 
+#endif // _LIBPLUS_PRECOMPILE_H
 
 
 

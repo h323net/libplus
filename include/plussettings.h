@@ -30,14 +30,19 @@
 
 #if defined(_MSC_VER)     // Windows
     #define LIB_COMPILER STR(_MSC_VER)
-    #if defined(WIN64)
+    #if defined(_WIN64)
     #define LIB_OS  "WIN64_" 
-    #elif defined(WIN32)
+    #elif defined(_WIN32)
     #define LIB_OS  "WIN32_"
-    #elif defined(ARM)
+    #elif defined(_ARM)
     #define LIB_OS  "WINARM_" 
     #endif
-#endif  // windows
+#else
+#if defined(P_ANDROID)
+    #define LIB_COMPILER STR(__ANDROID_API__)
+    #define LIB_OS  "ANDROID_" 
+#endif
+#endif  
 
 #define LIBPLUS_OS  LIB_OS LIB_COMPILER
 
@@ -58,7 +63,7 @@
 #if _WIN32
 #define pathExcept   "\\except.ini"
 #else
-
+#define pathExcept   "/except.ini"
 #endif
 
 // Media Rendering
@@ -92,7 +97,13 @@ static PString defDBSectVar     = "variables";
 #define defdrvvideoplay       "Window"
 #define defdrvaudiorec        "WindowsMultimedia" //"DirectSound"  "WASAPI"
 #define defdrvaudioplay       "WindowsMultimedia" //"DirectSound"  "WASAPI"
-#define defApplicationDriver  "Application";
+#define defApplicationDriver  "Application"
+#else
+#define defdrvvideorec        ""
+#define defdrvvideoplay       ""
+#define defdrvaudiorec        "" 
+#define defdrvaudioplay       "" 
+#define defApplicationDriver  ""
 #endif
 
 
