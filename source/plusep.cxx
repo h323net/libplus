@@ -181,8 +181,15 @@ PString GetDriverList(PlusProcess::Setting setting)
 
 /////////////////////////////////////////////////////////////////////////
 
+#ifdef H323_DATASTORE
 PlusEndPoint::PlusEndPoint(PlusProcess & process, H323DataStore & _data)
-:  m_process(process), m_dataStore(_data), m_currentCallToken(PString()), m_stunType(0), m_endpointIsSetup(false), m_libPath(PProcess::Current().GetFile().GetDirectory())
+#else
+PlusEndPoint::PlusEndPoint(PlusProcess & process)
+#endif
+:  m_process(process), m_currentCallToken(PString()), m_stunType(0), m_endpointIsSetup(false), m_libPath(PProcess::Current().GetFile().GetDirectory())
+#ifdef H323_DATASTORE
+   ,m_dataStore(_data)
+#endif
 {
     // Set the endpoint Local UserName.
     
@@ -208,7 +215,11 @@ void PlusEndPoint::InitialiseSettings()
 {
     INIT_SET(version, LIBPLUS_VERSION)
     INIT_SET(tracing,"0") 
+#ifdef H323_DATASTORE
     INIT_SET(username, m_dataStore.GetDefaultID())
+#else
+    INIT_SET(username, GetLocalUserName())
+#endif
     INIT_SET(password, "") 
     INIT_SET(server, "")
     INIT_SET(quality, "1") 
@@ -448,7 +459,7 @@ void AnalyizeFrameSizes(PlusEndPoint & ep, const PString & codec, PVideoInputDev
                 PTRACE(4, "VID\tRemoving problem size " << (unsigned)w << "x" << (unsigned)h);
                 caps.framesizes.erase(r++);    // don't understand parameter 10!            
             }
-            else if (!isDefault && w > ep.get_framewidth().AsInteger() || h > ep.get_frameheight().AsInteger()) {
+            else if (!isDefault && (w > ep.get_framewidth().AsInteger() || h > ep.get_frameheight().AsInteger())) {
                 PTRACE(4, "VID\tRemoving not supported sz " << (unsigned)w << "x" << (unsigned)h);
                 caps.framesizes.erase(r++);
             }
@@ -824,11 +835,13 @@ void PlusEndPoint::HandleSettingChange(PlusProcess::Setting setting, const PStri
         case PlusProcess::e_curdrvaudioplay:    DRIVER_CHG(audioplay)   return;
         case PlusProcess::e_curdrvaudiorec:     DRIVER_CHG(audiorec)    return;
         default: 
+#ifdef H323_DATASTORE
             // Save settings
             if (dftValue != "*") {  // Initialise Save
                dftValue = m_dataStore.GetString(defDBSectVar, name, dftValue); 
             } else  // General Save
                m_dataStore.SetString(defDBSectVar, name, value);
+#endif
             break;
     }
 
@@ -915,15 +928,15 @@ PBoolean PlusEndPoint::InitialiseMediaEncryption()
 #ifdef H323_H235_AES256
     if (m_encryptmediahigh.AsInteger() == 1) {
         // Load the DH parameters if present
-        if (!m_dhOID) {
+       if (!m_dhOID) {
             PBYTEArray lprime;
             PBYTEArray lgenerator;
             PBase64::Decode(m_dhPrime, lprime);
             PBase64::Decode(m_dhGenerator, lgenerator);
             H235Authenticators::LoadDHData(m_dhOID, lprime, lgenerator);
-        }
-
-        ncipher = encypt192;
+            ncipher = encypt192;
+        } else 
+            ncipher = encypt256;
         maxtoken = 2048;
     } else
 #endif    
@@ -1125,8 +1138,8 @@ H224_Handler * PlusEndPoint::GetH224Handler(const PString & id)
 
 PBoolean PlusEndPoint::H224ReceivedSettings(const PString & id, BYTE cpid, const BYTE * data, int & length)
 {
-    H224_Handler * handler = GetH224Handler(id);
 #ifdef H224_H284
+    H224_Handler * handler = GetH224Handler(id);
     if (handler && id == "H284") {
         H224_H284Handler * h284 = (H224_H284Handler*)handler;
         H284_ControlPoint * cp = h284->GetControlPoint(cpid);

@@ -152,9 +152,9 @@ private:
     PLUSdevice*     m_eventCallBack;
     PThread *       m_endpointThread;
     PDECLARE_NOTIFIER(PThread, PlusProcess, ThreadEndpoint);
-
+#ifdef H323_DATASTORE
     H323DataStore * m_dataStore;
-
+#endif
     PSyncPointAck   m_shutdown;
 
 };

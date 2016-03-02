@@ -88,6 +88,7 @@ PlusProcess::PlusProcess(PLUSdevice * apiInstance)
     m_endpoint(NULL), m_eventCallBack(apiInstance), m_endpointThread(NULL)
 {
     // Open DB to default settings Table
+#ifdef H323_DATASTORE
     m_dataStore = new H323DataStore(dataStoreName, dataStoreKey, defDBTable, defDBId);
     if (!m_dataStore->HasKey(defDBSection, defDBKey)) {
         l_vLocalUser = m_dataStore->GetString(defDBSection, defDBKey, l_vLocalUser);
@@ -99,14 +100,16 @@ PlusProcess::PlusProcess(PLUSdevice * apiInstance)
         
     m_dataStore->SetDefaultID(l_vLocalUser);
     m_dataStore->SetDefaultSection(defDBSectVar);
-
+#endif
     Initialise();
 }
 
 PlusProcess::~PlusProcess()
 {
     Uninitialise();
+#ifdef H323_DATASTORE
     delete m_dataStore;
+#endif
 }
 
 void PlusProcess::Uninitialise()
@@ -148,7 +151,11 @@ void PlusProcess::SetLocalUserName(const PString & username)
 void PlusProcess::ThreadEndpoint(PThread &, INT)
 {
     PTRACE(2, "EP\tStarting Endpoint");
+#ifdef H323_DATASTORE
     m_endpoint = new PlusEndPoint(*this, *m_dataStore);
+#else
+    m_endpoint = new PlusEndPoint(*this);
+#endif
 
     l_vEndPointLocked = false;
 
@@ -317,6 +324,7 @@ void PlusProcess::InternalDoMethod(Method id, const PString & p1, const PString 
         PlusProcessMethod(secondcall)
         PlusProcessMethod(stop) 
         PlusProcessMethod(dhParameters)
+        PlusProcessMethod(userMethod)
         // IMPL: Method Names Here
     }
 }

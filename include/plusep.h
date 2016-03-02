@@ -83,7 +83,12 @@ class PlusEndPoint : public H323EndPoint
     PCLASSINFO(PlusEndPoint, H323EndPoint);
 
 public:
+#ifdef H323_DATASTORE
     PlusEndPoint(PlusProcess & _process, H323DataStore & _data);
+#else
+    PlusEndPoint(PlusProcess & _process);
+#endif
+
     ~PlusEndPoint();
 
     // Settings Macros
@@ -158,7 +163,13 @@ public:
     PlusMethod(start) { Initialise(); }
     PlusMethod(stop) { UnInitialise(); }
     PlusMethod(secondcall) {}
-    PlusMethod(dhParameters) { GenerateParameters(); }
+    PlusMethod(dhParameters) 
+    { 
+#ifdef H323_H235
+        GenerateParameters();
+#endif
+    }
+    PlusMethod(userMethod) {}   // Not used but there for GCC warning
     // IMPL: Method Names here
 
     // Event macros
@@ -303,8 +314,6 @@ protected:
 private:
     PlusProcess & m_process;                    // Process for callbacks
 
-    H323DataStore & m_dataStore;                // Settings for the endpoint
-
     PString     m_currentCallToken;             // Current call token Not empty when on a call
 
     PString     m_configFile;                   // Configuration File
@@ -325,6 +334,10 @@ private:
 
     PBoolean    m_endpointIsSetup;
     PDirectory  m_libPath;
+
+#ifdef H323_DATASTORE
+    H323DataStore & m_dataStore;                // Settings for the endpoint
+#endif
 };
 
 
