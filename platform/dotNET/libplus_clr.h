@@ -93,14 +93,14 @@ void UnManaged_Call(CLR_PLUSdevice * device, int settingID, const char* str1, co
 
 #pragma managed
 
-void SetValue(CLR_PLUSdevice * device, int settingID, String ^ value)
+void Managed_SetValue(CLR_PLUSdevice * device, int settingID, String ^ value)
 {
     marshal_context^ context = gcnew marshal_context();
     UnManaged_SetValue(device, settingID, context->marshal_as<const char*>(value));
     delete context;
 }
 
-void Call(CLR_PLUSdevice * device, int settingID, String ^ p1 = "", String ^ p2 = "", String ^ p3 = "")
+void Managed_Call(CLR_PLUSdevice * device, int settingID, String ^ p1 = "", String ^ p2 = "", String ^ p3 = "")
 {
     marshal_context^ context = gcnew marshal_context();
     UnManaged_Call(device, settingID, context->marshal_as<const char*>(p1), 
@@ -111,20 +111,20 @@ void Call(CLR_PLUSdevice * device, int settingID, String ^ p1 = "", String ^ p2 
 #define libNETSetting(name) \
 property String^ name { \
     String^ get() { return  gcnew String((m_Impl->Get_Value(PLUSdevice::e_##name)).c_str()); } \
-    void set(String^ value) { SetValue(m_Impl, PLUSdevice::e_##name, value); } \
+    void set(String^ value) { Managed_SetValue(m_Impl, PLUSdevice::e_##name, value); } \
 }
 
 #define libNETMethod0(name) \
-void name##() { Call(m_Impl, PLUSdevice::e_##name); }
+void name##() { Managed_Call(m_Impl, PLUSdevice::e_##name); }
 
 #define libNETMethod1(name) \
-void name##(String^ str1) { Call(m_Impl, PLUSdevice::e_##name, str1); }
+void name##(String^ str1) { Managed_Call(m_Impl, PLUSdevice::e_##name, str1); }
 
 #define libNETMethod2(name) \
-void name##(String^ str1, String^ str2) { Call(m_Impl, PLUSdevice::e_##name, str1, str2); }
+void name##(String^ str1, String^ str2) { Managed_Call(m_Impl, PLUSdevice::e_##name, str1, str2); }
 
 #define libNETMethod3(name) \
-void name##(String^ str1, String^ str2, String^ str3) { Call(m_Impl, PLUSdevice::e_##name, str1, str2, str3); }
+void name##(String^ str1, String^ str2, String^ str3) { Managed_Call(m_Impl, PLUSdevice::e_##name, str1, str2, str3); }
 
 #define libNETEventDel1(name) \
 public delegate void name##_del(String^ p1);

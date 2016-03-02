@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{B69F921F-44E5-4C06-9E14-AF53D650E9EB}</ItemsProjectGuid>
+    <ItemsProjectName>libPLUS Common</ItemsProjectName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\libplus.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\plusep.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\pluslang.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\plusprocess.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\plussettings.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\include\precompile.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\libplus.cxx" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\plusep.cxx" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\source\plusprocess.cxx" />
+  </ItemGroup>
+</Project>
