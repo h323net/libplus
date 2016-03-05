@@ -150,6 +150,9 @@
     <AntProjectPropertiesFile Include="project.properties" />
     <JavaCompile Include="src\com\libPLUS_android\libPLUS_android.java" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\platform\android\libPLUS.vcxproj" />
+  </ItemGroup>
   <Import Project="$(AndroidTargetsPath)\Android.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

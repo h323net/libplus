@@ -47,7 +47,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>Clang_3_6</PlatformToolset>
+    <PlatformToolset>Gcc_4_9</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -57,7 +57,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>Clang_3_6</PlatformToolset>
+    <PlatformToolset>Gcc_4_9</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -67,7 +67,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>Clang_3_6</PlatformToolset>
+    <PlatformToolset>Gcc_4_9</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -92,42 +92,42 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
     <IntDir>$(OutDir)\$(Configuration)\</IntDir>
-    <TargetName>libPLUSd</TargetName>
+    <TargetName>libPLUSjni</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
     <IntDir>$(OutDir)\$(Configuration)\</IntDir>
-    <TargetName>libPLUS</TargetName>
+    <TargetName>libPLUSjni</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <TargetName>libPLUSd</TargetName>
+    <TargetName>libPLUSjni</TargetName>
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
     <IntDir>$(OutDir)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <TargetName>libPLUS</TargetName>
+    <TargetName>libPLUSjni</TargetName>
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
     <IntDir>$(OutDir)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
     <IntDir>$(OutDir)\$(Configuration)\</IntDir>
-    <TargetName>libPLUSd</TargetName>
+    <TargetName>libPLUSjni</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
     <IntDir>$(OutDir)\$(Configuration)\</IntDir>
-    <TargetName>libPLUS</TargetName>
+    <TargetName>libPLUSjni</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
     <IntDir>$(OutDir)\$(Configuration)\</IntDir>
-    <TargetName>libPLUSd</TargetName>
+    <TargetName>libPLUSjni</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
     <IntDir>$(OutDir)\$(Configuration)\</IntDir>
-    <TargetName>libPLUS</TargetName>
+    <TargetName>libPLUSjni</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

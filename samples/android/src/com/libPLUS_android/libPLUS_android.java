@@ -18,4 +18,13 @@ public class libPLUS_android extends Activity
         tv.setText("Hello World!");
         setContentView(tv);
     }
+
+    static {
+    	try {
+            System.loadLibrary("PLUSjni");
+        } catch (UnsatisfiedLinkError e) {
+            System.err.println("Native code library failed to load.\n" + e);
+            System.exit(1);
+        }
+    }
 }

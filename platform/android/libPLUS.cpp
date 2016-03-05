@@ -1,7 +1,7 @@
 #include "libPLUS.h"
 
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "libPLUS", __VA_ARGS__))
-#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "libPLUS", __VA_ARGS__))
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "libPLUSjni", __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "libPLUSjni", __VA_ARGS__))
 
 extern "C" {
 	/* This trivial function returns the platform ABI for which this dynamic native library is compiled.*/
