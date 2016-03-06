@@ -1,5 +1,6 @@
 #pragma once
 
+/**
 class libPLUS
 {
 public:
@@ -8,3 +9,4 @@ public:
 	~libPLUS();
 };
 
+*/
