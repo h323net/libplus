@@ -148,7 +148,7 @@ void PlusProcess::SetLocalUserName(const PString & username)
 }
 
 
-void PlusProcess::ThreadEndpoint(PThread &, INT)
+void PlusProcess::ThreadEndpoint(PThread &, H323_INT)
 {
     PTRACE(2, "EP\tStarting Endpoint");
 #ifdef H323_DATASTORE
