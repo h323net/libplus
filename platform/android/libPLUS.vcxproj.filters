@@ -4,7 +4,6 @@
     <ClCompile Include="libPLUS.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="libPLUS.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
 </Project>

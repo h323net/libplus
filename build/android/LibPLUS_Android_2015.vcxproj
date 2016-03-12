@@ -48,41 +48,49 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Gcc_4_9</PlatformToolset>
+    <AndroidAPILevel>android-19</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Gcc_4_9</PlatformToolset>
+    <AndroidAPILevel>android-19</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Gcc_4_9</PlatformToolset>
+    <AndroidAPILevel>android-19</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Gcc_4_9</PlatformToolset>
+    <AndroidAPILevel>android-19</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Gcc_4_9</PlatformToolset>
+    <AndroidAPILevel>android-19</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Gcc_4_9</PlatformToolset>
+    <AndroidAPILevel>android-19</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Gcc_4_9</PlatformToolset>
+    <AndroidAPILevel>android-19</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Gcc_4_9</PlatformToolset>
+    <AndroidAPILevel>android-19</AndroidAPILevel>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
@@ -93,56 +101,56 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
-    <IntDir>$(OutDir)\$(Configuration)\</IntDir>
+    <IntDir>$(OutDir)$(Configuration)\</IntDir>
     <TargetName>libPLUSsd</TargetName>
     <IncludePath>..\..\include;..\..\..\ptlib\include;..\..\..\ptlib\lib\$(Platform)\include;..\..\..\ptlib\build\android;..\..\..\h323plus\include;..\..\..\h323plus\lib\$(Platform)\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\ptlib\lib;..\..\..\h323plus\lib\$(Platform);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
-    <IntDir>$(OutDir)\$(Configuration)\</IntDir>
+    <IntDir>$(OutDir)$(Configuration)\</IntDir>
     <TargetName>libPLUSs</TargetName>
     <LibraryPath>..\..\..\ptlib\lib;..\..\..\h323plus\lib\$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>..\..\include;..\..\..\ptlib\include;..\..\..\ptlib\lib\$(Platform)\include;..\..\..\ptlib\build\android;..\..\..\h323plus\include;..\..\..\h323plus\lib\$(Platform)\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
-    <IntDir>$(OutDir)\$(Configuration)\</IntDir>
+    <IntDir>$(OutDir)$(Configuration)\</IntDir>
     <TargetName>libPLUSsd</TargetName>
     <IncludePath>..\..\include;..\..\..\ptlib\include;..\..\..\ptlib\lib\$(Platform)\include;..\..\..\ptlib\build\android;..\..\..\h323plus\include;..\..\..\h323plus\lib\$(Platform)\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\ptlib\lib;..\..\..\h323plus\lib\$(Platform);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
-    <IntDir>$(OutDir)\$(Configuration)\</IntDir>
+    <IntDir>$(OutDir)$(Configuration)\</IntDir>
     <TargetName>libPLUSs</TargetName>
     <LibraryPath>..\..\..\ptlib\lib;..\..\..\h323plus\lib\$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>..\..\include;..\..\..\ptlib\include;..\..\..\ptlib\lib\$(Platform)\include;..\..\..\ptlib\build\android;..\..\..\h323plus\include;..\..\..\h323plus\lib\$(Platform)\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
-    <IntDir>$(OutDir)\$(Configuration)\</IntDir>
+    <IntDir>$(OutDir)$(Configuration)\</IntDir>
     <TargetName>libPLUSsd</TargetName>
     <IncludePath>..\..\include;..\..\..\ptlib\include;..\..\..\ptlib\lib\$(Platform)\include;..\..\..\ptlib\build\android;..\..\..\h323plus\include;..\..\..\h323plus\lib\$(Platform)\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\ptlib\lib;..\..\..\h323plus\lib\$(Platform);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
-    <IntDir>$(OutDir)\$(Configuration)\</IntDir>
+    <IntDir>$(OutDir)$(Configuration)\</IntDir>
     <TargetName>libPLUSs</TargetName>
     <LibraryPath>..\..\..\ptlib\lib;..\..\..\h323plus\lib\$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>..\..\include;..\..\..\ptlib\include;..\..\..\ptlib\lib\$(Platform)\include;..\..\..\ptlib\build\android;..\..\..\h323plus\include;..\..\..\h323plus\lib\$(Platform)\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
-    <IntDir>$(OutDir)\$(Configuration)\</IntDir>
+    <IntDir>$(OutDir)$(Configuration)\</IntDir>
     <TargetName>libPLUSsd</TargetName>
     <IncludePath>..\..\include;..\..\..\ptlib\include;..\..\..\ptlib\lib\$(Platform)\include;..\..\..\ptlib\build\android;..\..\..\h323plus\include;..\..\..\h323plus\lib\$(Platform)\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\ptlib\lib;..\..\..\h323plus\lib\$(Platform);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <OutDir>$(ProjectDir)..\..\lib\$(Platform)\</OutDir>
-    <IntDir>$(OutDir)\$(Configuration)\</IntDir>
+    <IntDir>$(OutDir)$(Configuration)\</IntDir>
     <TargetName>libPLUSs</TargetName>
     <LibraryPath>..\..\..\ptlib\lib;..\..\..\h323plus\lib\$(Platform);$(LibraryPath)</LibraryPath>
     <IncludePath>..\..\include;..\..\..\ptlib\include;..\..\..\ptlib\lib\$(Platform)\include;..\..\..\ptlib\build\android;..\..\..\h323plus\include;..\..\..\h323plus\lib\$(Platform)\include;$(IncludePath)</IncludePath>
