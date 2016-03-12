@@ -653,6 +653,7 @@ PBoolean PlusEndPoint::InitialiseGateway()
         PTRACE(4, "EP\tGateway already set!");
         return true;
     }
+#ifdef P_DNS
     PStringList gwsvr;
     PString server = "h323:user@" + PString(defGWsrv);
     if (PDNS::LookupSRV(server, "_h323cs._tcp.", gwsvr)) {
@@ -683,6 +684,9 @@ PBoolean PlusEndPoint::InitialiseGateway()
         PStringList stun = stunsvr[0].Tokenise("@");
         SetSTUNServer(stun[1]);
     }
+#else
+    m_h46017GW = defGWsrv;
+#endif
     PTRACE(4, "EP\tCall Gateway set to " << m_h46017GW);
     return true;
 }
@@ -703,6 +707,7 @@ PBoolean PlusEndPoint::RegisterGatekeeper()
     if (!m_password) SetGatekeeperPassword(m_password);
 
     PStringList gkHost;
+#if P_DNS
     PString number = m_server;
     if (number.Left(5) != "h323:")
         number = "h323:user@" + number;
@@ -716,6 +721,10 @@ PBoolean PlusEndPoint::RegisterGatekeeper()
             gkHost.AppendString(newhost);
         }
     }
+#else
+    gkHost.AppendString(m_server);
+#endif
+
     for (PINDEX j = 0; j < gkHost.GetSize(); j++) {
         H323TransportAddress tempAddr(gkHost[j]);
         PIPSocket::Address gkIP;
