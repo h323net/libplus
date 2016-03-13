@@ -23,6 +23,4 @@ C:\h323net\libplus\bin\ARM\Package\project.properties
 C:\h323net\libplus\bin\ARM\Package\build.xml
 C:\h323net\libplus\bin\ARM\libPLUSandroid.apk
 C:\h323net\libplus\bin\ARM\libPLUSandroid.lastsuccessfuldeploy
-C:\h323net\libplus\bin\ARM\Package\src\com\libPLUSandroid\libPLUSactivity.java
 C:\h323net\libplus\samples\android\ARM\Debug\FileStringReplace.incremental
-C:\h323net\libplus\bin\ARM\Package\src\com\libPLUSandroid\libPLUS.java

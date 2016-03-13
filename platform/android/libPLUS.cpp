@@ -22,14 +22,51 @@
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "libPLUSjni", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "libPLUSjni", __VA_ARGS__))
 
-PLUSdevice m_plus;
+PLUSdevice * m_plus = NULL;
 
-#define libAndroidSetting(name) \
+// MACROS
+
+#define JNI_PATH Java_com_libPLUSandroid_libPLUSandroid_
+
+#define JNI_HEADER(name) \
+extern "C" { \
+JNIEXPORT void JNICALL Java_com_libPLUSandroid_libPLUSandroid_##name(JNIEnv* env, jobject thiz); \
+}; \
+JNIEXPORT void JNICALL Java_com_libPLUSandroid_libPLUSandroid_##name(JNIEnv* env, jobject thiz)
+
+#define JNI_HEADER_VOID(name) \
+extern "C" { \
+JNIEXPORT void JNICALL Java_com_libPLUSandroid_libPLUSandroid_set##name(JNIEnv* env, jobject thiz, jstring value); \
+}; \
+JNIEXPORT void JNICALL Java_com_libPLUSandroid_libPLUSandroid_set##name(JNIEnv* env, jobject thiz, jstring value)
+
+#define JNI_HEADER_JSTRING(name) \
 extern "C" { \
 JNIEXPORT jstring JNICALL Java_com_libPLUSandroid_libPLUSandroid_##name(JNIEnv* env, jobject thiz); \
 }; \
-JNIEXPORT jstring JNICALL Java_com_libPLUSandroid_libPLUSandroid_##name(JNIEnv* env, jobject thiz) \
-{  return env->NewStringUTF("Test");  }
+JNIEXPORT jstring JNICALL Java_com_libPLUSandroid_libPLUSandroid_##name(JNIEnv* env, jobject thiz)
+
+#define JNI_PLUS_CHECK_VOID \
+if (!m_plus) { return; }
+
+#define JNI_PLUS_CHECK_JSTRING \
+if (!m_plus) { return env->NewStringUTF("Error!"); }
+
+jstring ToJString(JNIEnv* env, std::string var)
+{
+    return env->NewStringUTF(var.c_str());
+}
+
+#define libAndroidSetting(name) \
+JNI_HEADER_JSTRING(name) \
+  { JNI_PLUS_CHECK_JSTRING return ToJString(env, m_plus->Get_Value(PLUSdevice::e_##name)); } \
+JNI_HEADER_VOID(name) \
+  { JNI_PLUS_CHECK_VOID m_plus->Set_Value(PLUSdevice::e_##name, env->GetStringUTFChars(value, NULL)); }
+
+
+// Initialise/Unitialise
+JNI_HEADER(Load) { if (!m_plus)  m_plus = new PLUSdevice(); }
+JNI_HEADER(UnLoad) { if (m_plus) { delete m_plus; m_plus = NULL; } }
 
 // Settings
 libAndroidSetting(version)
@@ -84,11 +121,8 @@ libAndroidSetting(encryptMediaHigh)
 // IMPL: Setting Name here
 
 
-extern "C" {
-    JNIEXPORT jstring JNICALL Java_com_libPLUSandroid_libPLUSandroid_stringFromJNI(JNIEnv* env, jobject thiz);
-}
-
-JNIEXPORT jstring JNICALL Java_com_libPLUSandroid_libPLUSandroid_stringFromJNI(JNIEnv* env, jobject thiz) {
+JNI_HEADER_JSTRING(stringFromJNI)
+{
 #if defined(__arm__)
 #if defined(__ARM_ARCH_7A__)
 #if defined(__ARM_NEON__)

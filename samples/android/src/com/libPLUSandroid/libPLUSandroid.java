@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.widget.TextView;
 import android.os.Bundle;
 
+import java.lang.reflect.*;
+
 public class libPLUSandroid extends Activity
 {
     /** Called when the activity is first created. */
@@ -13,10 +15,53 @@ public class libPLUSandroid extends Activity
     {
         super.onCreate(savedInstanceState);
 
+		Load();
+
         /* Create a TextView and set its text to "Hello world" */
         TextView  tv = new TextView(this);
-        tv.setText( stringFromJNI() + " " + version() );
+        tv.setText( String.format( TestDisplay() ) );
         setContentView(tv);
+		
+    }
+
+    /** Called when the activity is destroyed. */
+    @Override
+	public void onDestroy() {
+
+	   UnLoad();
+	   super.onDestroy();
+
+	 }
+
+    String TestDisplay() {
+
+	 String x = "Settings Iteration%n" +
+				"version = " + version() + "%n" +
+				"tracing = " + tracing() + "%n" +
+				"username = " + username() + "%n" +
+				"password = " + password() + "%n" +
+				"server = " + server() + "%n" +
+				"quality = " + quality() + "%n" +
+				"accessability = " + accessability() + "%n" +
+				"content = " + content() + "%n" +
+				"autoanswer = " + autoanswer() + "%n" +
+				"drvvideoplay= " + drvvideoplay() + "%n" +
+				"drvvideorec= " + drvvideorec() + "%n" +
+				"drvaudioplay= " + drvaudioplay() + "%n" +
+				"drvaudiorec= " + drvaudiorec() + "%n" +
+				"curdrvvideoplay= " + curdrvvideoplay() + "%n" +
+				"curdrvvideorec= " + curdrvvideorec() + "%n" +
+				"curdrvaudioplay= " + devvideoplay() + "%n" +
+				"curdrvaudiorec= " + devvideorec() + "%n" +
+				"devvideoplay= " + audioplay() + "%n" +
+				"devvideorec= " + devaudiorec() + "%n" +
+				"devaudioplay= " + audioplay() + "%n" +
+				"devaudiorec= " + devaudiorec() + "%n" +
+				"audioplay= " + audioplay() + "%n" +
+				"audiorec= " + audiorec() + "%n" +
+				"videoplay= " + videoplay() + "%n" +
+				"videorec= " + videorec() + "%n";
+		return x;
     }
 
     /* A native method that is implemented by the
@@ -25,6 +70,9 @@ public class libPLUSandroid extends Activity
      */
 
     public native String stringFromJNI();
+
+    public native void Load();
+    public native void UnLoad();
 
     public native String version();
     public native String tracing();

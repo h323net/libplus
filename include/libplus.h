@@ -35,7 +35,7 @@ public:
     /* Class Destructor
         This will destroy the device process
     */
-    ~PLUSdevice();
+    virtual ~PLUSdevice();
 
     /* Setting
         Setting identifier to pass with Get_Value and Set_Value function
