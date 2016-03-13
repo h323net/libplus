@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="libPLUS.cpp" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="libplus_jni.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h" />
+    <ClCompile Include="libplus_jni.cpp" />
   </ItemGroup>
 </Project>

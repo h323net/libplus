@@ -1,5 +1,5 @@
 /*
-* libPLUS.cpp
+* libplus_jni.cpp
 *
 * Copyright (c) 2016 ISVO (Asia) Pte Ltd. All Rights Reserved.
 *
@@ -18,15 +18,17 @@
 */
 
 #include "pch.h"
+#include "libplus_jni.h"
+
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "libPLUSjni", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "libPLUSjni", __VA_ARGS__))
 
-PLUSdevice * m_plus = NULL;
+JNI_PLUSdevice * m_plus = NULL;
 
 // MACROS
 
-#define JNI_PATH Java_com_libPLUSandroid_libPLUSandroid_
+#define JNI_PATH Java_com_libPLUSandroid_libPLUSandroid
 
 #define JNI_HEADER(name) \
 extern "C" { \
@@ -42,9 +44,9 @@ JNIEXPORT void JNICALL Java_com_libPLUSandroid_libPLUSandroid_set##name(JNIEnv* 
 
 #define JNI_HEADER_JSTRING(name) \
 extern "C" { \
-JNIEXPORT jstring JNICALL Java_com_libPLUSandroid_libPLUSandroid_##name(JNIEnv* env, jobject thiz); \
+JNIEXPORT jstring JNICALL Java_com_libPLUSandroid_libPLUSandroid_get##name(JNIEnv* env, jobject thiz); \
 }; \
-JNIEXPORT jstring JNICALL Java_com_libPLUSandroid_libPLUSandroid_##name(JNIEnv* env, jobject thiz)
+JNIEXPORT jstring JNICALL Java_com_libPLUSandroid_libPLUSandroid_get##name(JNIEnv* env, jobject thiz)
 
 #define JNI_PLUS_CHECK_VOID \
 if (!m_plus) { return; }
@@ -65,7 +67,7 @@ JNI_HEADER_VOID(name) \
 
 
 // Initialise/Unitialise
-JNI_HEADER(Load) { if (!m_plus)  m_plus = new PLUSdevice(); }
+JNI_HEADER(Load) { if (!m_plus)  m_plus = new JNI_PLUSdevice(env, thiz); }
 JNI_HEADER(UnLoad) { if (m_plus) { delete m_plus; m_plus = NULL; } }
 
 // Settings
@@ -120,41 +122,49 @@ libAndroidSetting(encryptMedia)
 libAndroidSetting(encryptMediaHigh)
 // IMPL: Setting Name here
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-JNI_HEADER_JSTRING(stringFromJNI)
+#define JNI_JOIN(str1, str2) #str1#str2
+
+#define JNI_EVENTMAP1(name) \
+  mid = env->GetMethodID(cls, JNI_JOIN(on,name), "(Ljava/lang/String;)V"); \
+  m_eventMap.insert(std::make_pair(PLUSdevice::e_##name,mid));
+  
+JNI_PLUSdevice::JNI_PLUSdevice(JNIEnv* env, jobject obj)
+: m_env(env), m_obj(obj)
 {
-#if defined(__arm__)
-#if defined(__ARM_ARCH_7A__)
-#if defined(__ARM_NEON__)
-#if defined(__ARM_PCS_VFP)
-#define ABI "armeabi-v7a/NEON (hard-float)"
-#else
-#define ABI "armeabi-v7a/NEON"
-#endif
-#else
-#if defined(__ARM_PCS_VFP)
-#define ABI "armeabi-v7a (hard-float)"
-#else
-#define ABI "armeabi-v7a"
-#endif
-#endif
-#else
-#define ABI "armeabi"
-#endif
-#elif defined(__i386__)
-#define ABI "x86"
-#elif defined(__x86_64__)
-#define ABI "x86_64"
-#elif defined(__mips64)  // mips64el-* toolchain defines __mips__ too
-#define ABI "mips64"
-#elif defined(__mips__)
-#define ABI "mips"
-#elif defined(__aarch64__)
-#define ABI "arm64-v8a"
-#else
-#define ABI "unknown"
-#endif
+    jclass cls = env->GetObjectClass(obj);
+    jmethodID mid;
 
-    return env->NewStringUTF("Hello from JNI !  Compiled with ABI " ABI ".");
+    // Load the event map
+    JNI_EVENTMAP1(status)
+    JNI_EVENTMAP1(isinitialised)
+    JNI_EVENTMAP1(videoframe)
+    JNI_EVENTMAP1(callerid)
+    JNI_EVENTMAP1(incomingcall)
+    JNI_EVENTMAP1(incall)
+    JNI_EVENTMAP1(encryption)
+    JNI_EVENTMAP1(farEndCameraInstruct)
+    JNI_EVENTMAP1(realTimeTextInstruct)
+    JNI_EVENTMAP1(farEndMotoisedInstruct)
+    JNI_EVENTMAP1(PhoneNumberEvent)
+    JNI_EVENTMAP1(URIaddressEvent)
+    JNI_EVENTMAP1(presenceSupport)
+    JNI_EVENTMAP1(duplicate)
+    JNI_EVENTMAP1(forwardCall)
+    JNI_EVENTMAP1(dhGenerate)
+    // IMPL: Event Name here
+
 }
 
+JNI_PLUSdevice::~JNI_PLUSdevice()
+{
+    m_eventMap.clear();
+}
+
+void JNI_PLUSdevice::Event(int evtID, const char * p1, const char * p2, const char * p3, const char * p4)
+{
+    jmethodID mid = m_eventMap[evtID];
+    if (mid != 0)
+        m_env->CallVoidMethod(m_obj, mid, m_env->NewStringUTF(p1));
+}

@@ -17,6 +17,7 @@ C:\h323net\libplus\bin\ARM\Package\libs\armeabi-v7a\gdbserver
 C:\h323net\libplus\bin\ARM\Package\libs\armeabi-v7a\libPLUSjni.so
 C:\h323net\libplus\bin\ARM\Package\libs\armeabi-v7a\libgnustl_static.a
 C:\h323net\libplus\bin\ARM\Package\res\values\strings.xml
+C:\h323net\libplus\bin\ARM\Package\src\com\libPLUSandroid\libPLUS.java
 C:\h323net\libplus\bin\ARM\Package\src\com\libPLUSandroid\libPLUSandroid.java
 C:\h323net\libplus\bin\ARM\Package\AndroidManifest.xml
 C:\h323net\libplus\bin\ARM\Package\project.properties
