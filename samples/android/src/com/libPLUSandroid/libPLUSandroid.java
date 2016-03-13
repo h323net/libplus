@@ -34,7 +34,7 @@ public class libPLUSandroid extends Activity
 
 	/*
 	 * Events
-	 * Derive these functions to get events
+	 * Override these functions to receive events
 	 */
     public void onstatus(String val) {}
     public void onisinitialised(String val) {}
@@ -52,12 +52,27 @@ public class libPLUSandroid extends Activity
     public void onduplicate(String notused) {}
     public void onforwardCall(String val) {}
     public void ondhGenerate(String val) {};
+    // IMPL: Event Name here
 
 	/*
 	 * Methods
 	 */
     public native void Load();
     public native void UnLoad();
+
+    public native void doplaceCall(String p1);
+    public native void dohangupCall();
+    public native void doanswerCall();
+    public native void dosendDTMF(String p1);
+    public native void dofarEndCamera(String p1, String p2, String p3);
+    public native void dostart();
+    public native void dofarEndMotorized(String p1, String p2, String p3);
+    public native void dorealTimeTextInput(String p1);
+    public native void dorealTimeTextNewLine();
+    public native void dosecondCall(String p1);
+    public native void dostop();
+    public native void dodhParameters();
+    // IMPL: Method Names Here
 
 	/*
 	 * Settings
@@ -201,6 +216,7 @@ public class libPLUSandroid extends Activity
 
     public native String getencryptMediaHigh();
     public native void setencryptmediahigh(String val);
+	// IMPL: Setting Name here
 
    static {
     	try {
