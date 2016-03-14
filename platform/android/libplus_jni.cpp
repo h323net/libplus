@@ -26,8 +26,10 @@
 
 JNI_PLUSdevice * m_plus = NULL;
 
-// MACROS
-#define JNI_PATH Java_com_libPLUSandroid_libPLUSandroid_
+//////////////////////////////////////////////////////////////////////
+// TODO
+// Simplify the macros 
+//////////////////////////////////////////////////////////////////////
 
 #define JNI_HEADER(name) \
 extern "C" { \
@@ -70,7 +72,6 @@ extern "C" { \
 JNIEXPORT void JNICALL Java_com_libPLUSandroid_libPLUSandroid_do##name(JNIEnv* env, jobject thiz, jstring p1, jstring p2, jstring p3); \
 }; \
 JNIEXPORT void JNICALL Java_com_libPLUSandroid_libPLUSandroid_do##name(JNIEnv* env, jobject thiz, jstring p1, jstring p2, jstring p3)
-
 
 #define JNI_PLUS_CHECK_VOID \
 if (!m_plus) { return; }
@@ -228,3 +229,4 @@ void JNI_PLUSdevice::Event(int evtID, const char * p1, const char * p2, const ch
     if (mid != 0)
         m_env->CallVoidMethod(m_obj, mid, m_env->NewStringUTF(p1));
 }
+
