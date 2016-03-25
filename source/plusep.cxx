@@ -386,10 +386,17 @@ PBoolean PlusEndPoint::OpenVideoChannel(H323Connection & connection, PBoolean is
 {
     PTRACE(2, "VID\tOpening video channel " << (isEncoding ? "encoder" : "decoder"));
 
-    PVideoDevice * device = isEncoding ? (PVideoDevice *)PVideoInputDevice::CreateDeviceByName(m_videorec, m_curdrvvideorec)
-                                       : (PVideoDevice *)PVideoOutputDevice::CreateDeviceByName(m_videoplay, m_curdrvvideoplay);
+    PString deviceDriver = isEncoding ? m_curdrvvideorec : m_curdrvvideoplay;
+    PString deviceName   = isEncoding ? m_videorec : m_videoplay;
 
-    PString deviceName = isEncoding ? m_videorec : m_videoplay;
+#if PTLIB_VER >= 2120
+    PVideoDevice * device = isEncoding ? (PVideoDevice *)PVideoInputDevice::CreateOpenedDevice(deviceDriver, deviceName, FALSE)
+                                       : (PVideoDevice *)PVideoOutputDevice::CreateOpenedDevice(deviceDriver, deviceName, FALSE);
+#else
+    PVideoDevice * device = isEncoding ? (PVideoDevice *)PVideoInputDevice::CreateDeviceByName(deviceName, deviceDriver)
+                                       : (PVideoDevice *)PVideoOutputDevice::CreateDeviceByName(deviceName, deviceDriver);
+#endif
+
     if (!device) {
         PTRACE(1, "Failed to instance video device \"" << deviceName << '"');
         return false;
@@ -397,32 +404,41 @@ PBoolean PlusEndPoint::OpenVideoChannel(H323Connection & connection, PBoolean is
 
     if (isEncoding) {
         PVideoInputDevice::Capabilities videoCaps;
-        if (((PVideoInputDevice *)device)->GetDeviceCapabilities(&videoCaps)) {
+#if PTLIB_VER >= 2110
+        if (((PVideoInputDevice *)device)->GetDeviceCapabilities(deviceDriver, deviceName, &videoCaps))
             codec.SetSupportedFormats(videoCaps.framesizes);
-        } else {
-            // set fixed list of resolutions for drivers that don't provide a list
-            PVideoInputDevice::Capabilities caps;
+#endif
+        // set fixed list of resolutions for drivers that don't provide a list
+        if (videoCaps.framesizes.size() == 0) {
             PVideoFrameInfo cap;
             cap.SetColourFormat("YUV420P");
             cap.SetFrameRate(30);
             // sizes must be from largest to smallest
             cap.SetFrameSize(1280, 720);
-            caps.framesizes.push_back(cap);
+            videoCaps.framesizes.push_back(cap);
             cap.SetFrameSize(704, 576);
-            caps.framesizes.push_back(cap);
+            videoCaps.framesizes.push_back(cap);
             cap.SetFrameSize(352, 288);
-            caps.framesizes.push_back(cap);
-            codec.SetSupportedFormats(caps.framesizes);
+            videoCaps.framesizes.push_back(cap);
+            codec.SetSupportedFormats(videoCaps.framesizes);
         }
     }
 
     if (!device->SetFrameSize(codec.GetWidth(), codec.GetHeight()) ||
         !device->SetFrameRate(codec.GetFrameRate()) ||
-        !device->SetColourFormatConverter("YUV420P") ||
-        !device->Open(deviceName, TRUE)) {
-        PTRACE(1, "Failed to open or configure the video device \"" << deviceName << '"');
+        !device->SetColourFormatConverter("YUV420P")) {
+        PTRACE(1, "Failed to configure the video device \"" << deviceName << '"');
         return FALSE;
     }
+
+#if PTLIB_VER >= 2120
+    device->Start();
+#else
+    if (!device->Open(deviceName, TRUE)) {
+        PTRACE(1, "Failed to open the video device \"" << deviceName << '"');
+        return FALSE;
+    }
+#endif
 
     PVideoChannel * channel = new PVideoChannel;
 
