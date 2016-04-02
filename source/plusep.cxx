@@ -925,7 +925,7 @@ PBoolean GenerateDHParameters(PStringToString & param)
 }
 #endif
 
-void PlusEndPoint::ThreadGenerate(PThread &, INT)
+void PlusEndPoint::ThreadGenerate(PThread &, H323_INT)
 {
     fire_dhGenerate("1");
     PStringToString params;
