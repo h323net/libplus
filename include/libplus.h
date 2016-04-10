@@ -187,6 +187,13 @@ public:
         const char * p4 = ""      // parameter 4
         );
 
+    /* IsLoading
+	Check to see if the underlying library is loading
+	Use this to check when the library is instanced that the 
+`	settings have been fully loaded from the datastore.
+     */
+    bool IsLoading();
+
 protected:
 
 };

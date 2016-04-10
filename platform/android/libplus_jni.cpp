@@ -105,8 +105,21 @@ JNI_HEADER_DO3(name) \
 
 
 // Initialise/Unitialise
-JNI_HEADER(Load) { if (!m_plus)  m_plus = new JNI_PLUSdevice(env, thiz); }
-JNI_HEADER(UnLoad) { if (m_plus) { delete m_plus; m_plus = NULL; } }
+JNI_HEADER(Load) { 
+    if (!m_plus) {
+        m_plus = new JNI_PLUSdevice(env, thiz);
+        do {
+            usleep(100);
+        } while (m_plus->IsLoading());
+    }
+}
+
+JNI_HEADER(UnLoad) { 
+    if (m_plus) { 
+        delete m_plus; 
+        m_plus = NULL; 
+    } 
+}
 
     libAndroidMethod1(placeCall)
     libAndroidMethod(hangupCall)

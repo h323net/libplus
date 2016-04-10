@@ -147,6 +147,11 @@ void PlusProcess::SetLocalUserName(const PString & username)
 
 }
 
+bool PlusProcess::IsLoading()
+{
+    return l_vEndPointLocked;
+}
+
 
 void PlusProcess::ThreadEndpoint(PThread &, H323_INT)
 {
@@ -177,9 +182,8 @@ void PlusProcess::ThreadEndpoint(PThread &, H323_INT)
 void PlusProcess::SetSetting(Setting set, const PString & value)
 {
 
-    while (l_vEndPointLocked) {
-        PProcess::Sleep(250);
-    }
+    if (IsLoading())
+        PThread::Sleep(250);
 
     if (!m_endpoint) return;
 
@@ -239,8 +243,8 @@ void PlusProcess::SetSetting(Setting set, const PString & value)
 
 PString PlusProcess::GetSetting(Setting set)
 {
-    if (l_vEndPointLocked)
-        PThread::Sleep(200);  // Wait for the endpoint instance to be setup
+    if (IsLoading())
+        PThread::Sleep(250);  // Wait for the endpoint instance to be setup
 
     if (!m_endpoint) return PString();
 

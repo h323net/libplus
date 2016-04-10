@@ -136,6 +136,9 @@ public:
     // Events
     void HandleEvent(Event evt, const std::string & p1 = "", const std::string & p2 = "", const std::string & p3 = "", const std::string & p4 = "");
 
+	// Internal
+    bool IsLoading();
+
     static PString dataStoreName;
     static PString dataStoreKey;
 

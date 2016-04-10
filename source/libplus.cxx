@@ -43,6 +43,11 @@ PLUSdevice::~PLUSdevice()
     l_vProcess = NULL;
 }
 
+bool PLUSdevice::IsLoading()
+{
+    return l_vProcess->IsLoading();
+}
+
 void PLUSdevice::Set_Value(int settingID, const char * value)
 {
     if (!l_vProcess)
