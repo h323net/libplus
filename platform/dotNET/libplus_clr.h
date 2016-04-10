@@ -109,7 +109,7 @@ void Managed_Call(CLR_PLUSdevice * device, int settingID, String ^ p1 = "", Stri
 
 #define libNETSetting(name) \
 property String^ name { \
-    String^ get() { return  gcnew String((m_Impl->Get_Value(PLUSdevice::e_##name)).c_str()); } \
+    String^ get() { return  gcnew String(m_Impl->Get_Value(PLUSdevice::e_##name)); } \
     void set(String^ value) { Managed_SetValue(m_Impl, PLUSdevice::e_##name, value); } \
 }
 

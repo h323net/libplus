@@ -160,7 +160,7 @@ public:
         @return@
         current value for the settingID
     */
-    std::string Get_Value(
+    const char * Get_Value(
         int settingID  // setting from setting enum
         );
 

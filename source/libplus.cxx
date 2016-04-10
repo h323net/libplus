@@ -51,7 +51,7 @@ void PLUSdevice::Set_Value(int settingID, const char * value)
     l_vProcess->SetSetting((PlusProcess::Setting)settingID, value);
 }
 
-std::string PLUSdevice::Get_Value(int settingID)
+const char * PLUSdevice::Get_Value(int settingID)
 {
     if (!l_vProcess)
         return (const char *)PString();

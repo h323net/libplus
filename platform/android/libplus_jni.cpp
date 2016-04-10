@@ -81,7 +81,7 @@ if (!m_plus) { return env->NewStringUTF("Error!"); }
 
 #define JNI_JOIN(str1, str2) #str1#str2
 
-jstring ToJString(JNIEnv* env, std::string var) { return env->NewStringUTF(var.c_str()); }
+jstring ToJString(JNIEnv* env, const char * var) { return env->NewStringUTF(var); }
 const char * FromJString(JNIEnv* env, jstring var) { return env->GetStringUTFChars(var, NULL); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
