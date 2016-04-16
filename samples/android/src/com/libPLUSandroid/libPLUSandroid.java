@@ -52,7 +52,7 @@ public class libPLUSandroid extends Activity
     public void onduplicate(String notused) {}
     public void onforwardCall(String val) {}
     public void ondhGenerate(String val) {};
-    // IMPL: Event Name here
+    // IMPL: Event Names here
 
 	/*
 	 * Methods
@@ -208,6 +208,18 @@ public class libPLUSandroid extends Activity
     public native String getlistenport();
     public native void setlistenport(String val);
 
+    public native String getvideoformats();
+    public native void setvideoformats(String val);
+
+    public native String getvideoinformat();
+    public native void setvideoinformat(String val);
+
+    public native String getvideooutformat();
+    public native void setvideooutformat(String val);
+
+    public native String getsecondvideo();
+    public native void setsecondvideo(String val);
+
     public native void setencryptsignal(String val);
     public native String getencryptSignal();
 
@@ -216,7 +228,7 @@ public class libPLUSandroid extends Activity
 
     public native String getencryptMediaHigh();
     public native void setencryptmediahigh(String val);
-	// IMPL: Setting Name here
+	// IMPL: Setting Names Here
 
    static {
     	try {

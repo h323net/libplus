@@ -69,11 +69,9 @@
 // Media Rendering
 #define defDisplayWidth  352
 #define defDisplayHeight 288
-#define defDisplayFormat "BGR24"
-#define defBPP 24
+#define defVideoFormat   "YUV420P"
+#define defBufferSize   2048000
 
-#define defRenderThreads 3
-#define defTimeFrames 60
 #define defAudioDelay 150
 
 #define defTraceFile "libplus_trace.dat"

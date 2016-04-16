@@ -32,49 +32,17 @@
 
 #define PlusProcessMethod(name)  case e_##name: m_endpoint->Do##name(p1,p2,p3); break;
 
+#define PLUSProcessMediaBody(name) \
+bool PlusProcess::in##name(void * data, int size, int width, int height) { return false; } \
+bool PlusProcess::out##name(void * data, int size, int width, int height) { return m_eventCallBack->out##name(data, size, width, height); }
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Locals
 
 PBoolean l_vEndPointLocked = true;   // Whether the endpoint is not available to receive settings
 PString  l_vLocalUser = "default";
 
-class Method_Buffer
-{
-public:
-
-    struct Msg {
-
-        Msg(int id=0, const PString & ver1="", const PString & ver2="", const PString & ver3="")
-            : msgId(id), v1(ver1), v2(ver2), v3(ver3) {}
-
-        int msgId;
-        PString v1;
-        PString v2;
-        PString v3;
-    };
-
-    void AddMessage(int id, const PString & v1, const PString & v2, const PString & v3) {
-        PWaitAndSignal m(lMute);
-        Msg newMsg(id, v1, v2, v3);
-        lBuffer.push(newMsg);
-    };
-
-    PBoolean GetMessage(Msg & msg) {
-        PWaitAndSignal m(lMute);
-        if (lBuffer.size() == 0)
-            return false;
-        msg = lBuffer.front();
-        lBuffer.pop();
-        return true;
-    }
-
-private:
-    std::queue<Msg> lBuffer;
-
-    PMutex lMute;
-};
-
-Method_Buffer l_vMessages;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -164,12 +132,10 @@ void PlusProcess::ThreadEndpoint(PThread &, H323_INT)
 
     l_vEndPointLocked = false;
 
-    Method_Buffer::Msg msg;
     while (!m_shutdown.Wait(0)) {
-        while (l_vMessages.GetMessage(msg))
-            InternalDoMethod((Method)msg.msgId, msg.v1, msg.v2, msg.v3);
-
-        PThread::Sleep(50);
+        ProcessMessages();
+        ProcessMediaSamples();
+        PThread::Sleep(2);
     }
 
     delete m_endpoint;
@@ -231,13 +197,17 @@ void PlusProcess::SetSetting(Setting set, const PString & value)
         //PlusProcessSetSetting(initialised)
         PlusProcessSetSetting(language)
         PlusProcessSetSetting(listenport)
-        PlusProcessSetSetting(secondVideo)
+        PlusProcessSetSetting(videoformats)
+        PlusProcessSetSetting(videoinformat)
+        PlusProcessSetSetting(videooutformat)
+        PlusProcessSetSetting(secondvideo)
+
         PlusProcessSetSetting(encryptsignal)
         PlusProcessSetSetting(encryptmedia)
         PlusProcessSetSetting(encryptmediahigh)
         // IMPL: Setting Names Here
-    default:
-        break;
+        default:
+            break;
     }
 }
 
@@ -293,13 +263,16 @@ PString PlusProcess::GetSetting(Setting set)
         PlusProcessGetSetting(initialised)
         PlusProcessGetSetting(language)
         PlusProcessGetSetting(listenport)
-        PlusProcessGetSetting(secondVideo)
+        PlusProcessGetSetting(videoformats)
+        PlusProcessGetSetting(videoinformat)
+        PlusProcessGetSetting(videooutformat)
+        PlusProcessGetSetting(secondvideo)
 
         PlusProcessGetSetting(encryptsignal)
         PlusProcessGetSetting(encryptmedia)
         PlusProcessGetSetting(encryptmediahigh)
         // IMPL: Setting Names Here
-    default: break;
+        default: break;
     }
     return PString();
 }
@@ -309,7 +282,7 @@ void PlusProcess::DoMethod(Method id, const PString & p1, const PString & p2, co
 {
     if (!m_endpoint) return;
 
-    l_vMessages.AddMessage(id, p1, p2, p3);
+    m_messages.AddMessage(id, p1, p2, p3);
 }
 
 
@@ -330,6 +303,7 @@ void PlusProcess::InternalDoMethod(Method id, const PString & p1, const PString 
         PlusProcessMethod(dhParameters)
         PlusProcessMethod(userMethod)
         // IMPL: Method Names Here
+        default: break;
     }
 }
 
@@ -337,3 +311,42 @@ void PlusProcess::HandleEvent(Event evt, const std::string & p1, const std::stri
 {
       m_eventCallBack->Event((int)evt, p1.c_str(), p2.c_str(), p3.c_str(), p4.c_str());
 }
+
+
+PlusProcess::Sample::Sample()
+    : PBYTEArray(defBufferSize), m_id(-1), m_width(0), m_height(0)
+{
+
+}
+
+
+void PlusProcess::ProcessMessages()
+{
+    if (m_messages.GetMessage(m_msg))
+        InternalDoMethod((Method)m_msg.msgId, m_msg.v1, m_msg.v2, m_msg.v3);
+}
+
+
+void PlusProcess::ProcessMediaSamples()
+{
+    if (m_endpoint->GetMediaManager().ProcessMediaSamples(m_mediaBuffer.m_id, m_mediaBuffer.GetPointer(), m_mediaBuffer.m_size, m_mediaBuffer.m_width, m_mediaBuffer.m_height)) {
+        switch (m_mediaBuffer.m_id) {
+            case PlusMediaManager::e_audioOut: 
+                break;
+            case PlusMediaManager::e_videoOut:
+                outVideo(m_mediaBuffer.GetPointer(), m_mediaBuffer.m_size, m_mediaBuffer.m_width, m_mediaBuffer.m_height);
+                break;
+            case PlusMediaManager::e_extVideoOut:
+                break;
+            default: break;
+        }
+    }
+}
+
+// Media Handling
+PLUSProcessMediaBody(Audio)
+PLUSProcessMediaBody(Video)
+PLUSProcessMediaBody(Content)
+
+
+

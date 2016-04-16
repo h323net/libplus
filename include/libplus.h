@@ -19,6 +19,11 @@
 
 #pragma once
 
+#define PlusDevMedia(name) \
+bool in##name(void * data, int size, int width=0, int height=0); \
+virtual bool out##name(void * data, int size, int width=0, int height=0);
+
+
 /* PLUSdevice
     PLUSdevice class
 */
@@ -85,7 +90,11 @@ public:
         e_initialised,
         e_language,
         e_listenport,
-        e_secondVideo,
+        e_videoformats,
+        e_videoinformat,
+        e_videooutformat,
+        e_secondvideo,
+
         e_encryptSignal = 101,
         e_encryptMedia,
         e_encryptMediaHigh,
@@ -186,6 +195,12 @@ public:
         const char * p3 = "",     // parameter 3
         const char * p4 = ""      // parameter 4
         );
+
+    /* Media Handling
+     */
+    PlusDevMedia(Audio)
+    PlusDevMedia(Video)
+    PlusDevMedia(Content)
 
     /* IsLoading
 	Check to see if the underlying library is loading

@@ -22,6 +22,65 @@
 #include "libPLUSdll.h"
 
 
+////////////////////////////////////////////////////////////////////////////////
+
+#define libDLLEvtOpt(name) \
+case PLUSdevice::e_##name: m_dev.on##name(); break;
+
+#define libDLLEvtOpt1(name) \
+case PLUSdevice::e_##name: m_dev.on##name(p1); break;
+
+#define libDLLMediaDev(name) \
+virtual bool out##name(void * data, int size, int width=0, int height=0) { return m_dev.out##name(data, size, width, height); }
+
+
+class DLL_PLUSdevice : public PLUSdevice
+{
+
+public:
+
+    DLL_PLUSdevice(libPLUS & dev)
+        : m_dev(dev) {}
+
+
+    // Events
+    virtual void Event(int evtID, const char * p1 = "", const char * p2 = "", const char * p3 = "", const char * p4 = "")
+    {
+        switch (evtID) {
+            libDLLEvtOpt1(status)
+            libDLLEvtOpt1(isinitialised)
+            libDLLEvtOpt1(videoframe)
+            libDLLEvtOpt1(callerid)
+            libDLLEvtOpt1(incomingcall)
+            libDLLEvtOpt1(incall)
+            libDLLEvtOpt1(encryption)
+            libDLLEvtOpt1(farEndCameraInstruct)
+            libDLLEvtOpt1(realTimeTextInstruct)
+            libDLLEvtOpt1(farEndMotoisedInstruct)
+            libDLLEvtOpt1(PhoneNumberEvent)
+            libDLLEvtOpt1(URIaddressEvent)
+            libDLLEvtOpt1(presenceSupport)
+            libDLLEvtOpt(duplicate)
+            libDLLEvtOpt1(forwardCall)
+            libDLLEvtOpt1(dhGenerate);
+            // IMPL: Event Names here
+            default: break;
+        }
+    }
+
+    // Media
+    libDLLMediaDev(Audio)
+    libDLLMediaDev(Video)
+    libDLLMediaDev(Content)
+
+
+private:
+    libPLUS & m_dev;
+
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
 #define libDLLSetBody(name) \
 const char * libPLUS::get##name() \
      { if (m_Impl) return m_Impl->Get_Value(PLUSdevice::e_##name); \
@@ -42,8 +101,16 @@ void libPLUS::do##name(const char * str1, const char * str2) { if (m_Impl) m_Imp
 #define libDLLMethBody3(name) \
 void libPLUS::do##name(const char * str1, const char * str2, const char * str3) { if (m_Impl) m_Impl->Call(PLUSdevice::e_##name, str1, str2, str3); }
 
+#define libDLLEvtBody(name) \
+void libPLUS::on##name() {}
 
-////////////////////////////////////////////////////////////////////////////////
+#define libDLLEvtBody1(name) \
+void libPLUS::on##name(const char * str1) {}
+
+#define libDLLMediaBody(name) \
+bool libPLUS::in##name(void * data, int size, int width, int height) {  return m_Impl->in##name(data, size, width, height); } \
+bool libPLUS::out##name(void * data, int size, int width, int height) {  return false;  }
+
 
 libPLUS::libPLUS() : m_Impl(NULL) {  }
 
@@ -52,7 +119,7 @@ libPLUS::~libPLUS() { Unload(); }
 
 void libPLUS::Load()
 {
-    m_Impl = new PLUSdevice();
+    m_Impl = new DLL_PLUSdevice(*this);
 
     do {
         Sleep(100);
@@ -115,10 +182,15 @@ libDLLSetBody(showlocalvideo)
 libDLLSetBody(initialised)
 libDLLSetBody(language)
 libDLLSetBody(listenport)
+libDLLSetBody(videoformats)
+libDLLSetBody(videoinformat)
+libDLLSetBody(videooutformat)
+libDLLSetBody(secondvideo)
+
 libDLLSetBody(encryptSignal)
 libDLLSetBody(encryptMedia)
 libDLLSetBody(encryptMediaHigh)
-// IMPL: Setting Name here
+// IMPL: Setting Names Here
 
 
 // Methods
@@ -134,6 +206,32 @@ libDLLMethBody0(realTimeTextNewLine)
 libDLLMethBody1(secondCall)
 libDLLMethBody0(stop)
 libDLLMethBody0(dhParameters)
-// IMPL: Method Name here
+// IMPL: Method Names here
 
+
+// Events
+//libDLLEvtBody(progress);
+libDLLEvtBody1(status)
+libDLLEvtBody1(isinitialised)
+libDLLEvtBody1(videoframe)
+libDLLEvtBody1(callerid)
+libDLLEvtBody1(incomingcall)
+libDLLEvtBody1(incall)
+libDLLEvtBody1(encryption)
+libDLLEvtBody1(farEndCameraInstruct)
+libDLLEvtBody1(realTimeTextInstruct)
+libDLLEvtBody1(farEndMotoisedInstruct)
+libDLLEvtBody1(PhoneNumberEvent)
+libDLLEvtBody1(URIaddressEvent)
+libDLLEvtBody1(presenceSupport)
+libDLLEvtBody(duplicate)
+libDLLEvtBody1(forwardCall)
+libDLLEvtBody1(dhGenerate);
+// IMPL: Event Names here
+
+
+// Media
+libDLLMediaBody(Audio)
+libDLLMediaBody(Video)
+libDLLMediaBody(Content)
 

@@ -22,7 +22,6 @@ namespace libPLUS_CSharp
             plus.incomingcall += plus_incomingcall;
             plus.dhGenerate += plus_dhGenerate;
 
-
             // Initialisation Settings
             plus.tracing = "6";
             plus.curdrvvideorec = "DirectShow";
@@ -32,6 +31,7 @@ namespace libPLUS_CSharp
             plus.encryptMediaHigh = "1";
             plus.autoanswer = "1";
             plus.quality = "3";
+ 
 
             Console.WriteLine("Properties");
             foreach (var prop in plus.GetType().GetProperties())
@@ -56,8 +56,6 @@ namespace libPLUS_CSharp
                     plus.placeCall(a.Substring(2));
   
             }
-
-
 
             plus.stop();
             plus = null;

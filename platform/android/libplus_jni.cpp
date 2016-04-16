@@ -190,10 +190,15 @@ JNI_HEADER_SETVOID(name) \
     libAndroidSetting(initialised)
     libAndroidSetting(language)
     libAndroidSetting(listenport)
+    libAndroidSetting(videoformats)
+    libAndroidSetting(videoinformat)
+    libAndroidSetting(videooutformat)
+    libAndroidSetting(secondvideo)
+
     libAndroidSetting(encryptSignal)
     libAndroidSetting(encryptMedia)
     libAndroidSetting(encryptMediaHigh)
-    // IMPL: Setting Name here
+    // IMPL: Setting Names Here
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Events
@@ -227,7 +232,7 @@ JNI_PLUSdevice::JNI_PLUSdevice(JNIEnv* env, jobject obj)
     JNI_EVENTMAP1(duplicate)
     JNI_EVENTMAP1(forwardCall)
     JNI_EVENTMAP1(dhGenerate)
-    // IMPL: Event Name here
+    // IMPL: Event Names here
 
 }
 

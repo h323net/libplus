@@ -63,7 +63,7 @@ public:
     libNETCLR(duplicate)
     libNETCLR1(forwardCall)
     libNETCLR1(dhGenerate)
-    // IMPL: Event Name here
+    // IMPL: Event Names here
 
 protected:
 
@@ -170,7 +170,7 @@ namespace libplus {
     libNETEventDel(duplicate)
     libNETEventDel1(forwardCall)
     libNETEventDel1(dhGenerate)
-    // IMPL: Event Name here
+    // IMPL: Event Names here
 
 	public ref class libPLUS
 	{
@@ -199,7 +199,7 @@ namespace libplus {
                 libNETInitial(duplicate)
                 libNETInitial(forwardCall)
                 libNETInitial(dhGenerate)
-                // IMPL: Event Name here
+                // IMPL: Event Names here
             }
 
         protected:
@@ -254,10 +254,15 @@ namespace libplus {
             libNETSetting(initialised)
             libNETSetting(language)
             libNETSetting(listenport)
+            libNETSetting(videoformats)
+            libNETSetting(videoinformat)
+            libNETSetting(videooutformat)
+            libNETSetting(secondvideo)
+
             libNETSetting(encryptSignal)
             libNETSetting(encryptMedia)
             libNETSetting(encryptMediaHigh)
-            // IMPL: Setting Name here
+            // IMPL: Setting Names Here
 
 
             // Methods
@@ -273,7 +278,7 @@ namespace libplus {
             libNETMethod1(secondCall)
             libNETMethod0(stop)
             libNETMethod0(dhParameters)
-            // IMPL: Method Name here
+            // IMPL: Method Names here
 
                 // Events
             //    libNETEvent(progress);
@@ -293,7 +298,7 @@ namespace libplus {
             libNETEvent(duplicate)
             libNETEvent1(forwardCall)
             libNETEvent1(dhGenerate);
-            // IMPL: Event Name here
+            // IMPL: Event Names here
 
 
         private:

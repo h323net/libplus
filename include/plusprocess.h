@@ -22,6 +22,44 @@
 
 #include "libplus.h"
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Messages
+{
+public:
+    struct Msg {
+        Msg(int id = 0, const PString & ver1 = "", const PString & ver2 = "", const PString & ver3 = "")
+            : msgId(id), v1(ver1), v2(ver2), v3(ver3) {}
+        int msgId; 
+        PString v1, v2, v3;
+    };
+
+    void AddMessage(int id, const PString & v1, const PString & v2, const PString & v3) {
+        PWaitAndSignal m(lMute);
+        Msg newMsg(id, v1, v2, v3);
+        lBuffer.push(newMsg);
+    };
+
+    PBoolean GetMessage(Msg & msg) {
+        PWaitAndSignal m(lMute);
+        if (lBuffer.size() == 0)
+            return false;
+        msg = lBuffer.front();
+        lBuffer.pop();
+        return true;
+    }
+
+private:
+    std::queue<Msg> lBuffer;
+    PMutex lMute;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define PLUSProcessMedia(name) \
+bool in##name(void * data, int size, int width = 0, int height = 0); \
+bool out##name(void * data, int size, int width = 0, int height = 0);
+
 class PlusEndPoint;
 class PlusProcess : public PLibraryProcess
 {
@@ -75,13 +113,18 @@ public:
         e_initialised,
         e_language,
         e_listenport,
-        e_secondVideo,
+        e_videoformats,
+        e_videoinformat,
+        e_videooutformat,
+        e_secondvideo,
 
         e_encryptsignal = 101,
         e_encryptmedia,
         e_encryptmediahigh,
 
         // Internal Use Only
+        e_storageName = 991,
+        e_storageKey,
         e_dhOID,
         e_dhPrime,
         e_dhGenerator,
@@ -136,6 +179,23 @@ public:
     // Events
     void HandleEvent(Event evt, const std::string & p1 = "", const std::string & p2 = "", const std::string & p3 = "", const std::string & p4 = "");
 
+
+    struct Sample : public PBYTEArray
+    {
+        Sample();
+
+        unsigned m_id;
+        unsigned m_size;
+        unsigned m_width;
+        unsigned m_height;
+    };
+
+    /* Media Handling
+    */
+    PLUSProcessMedia(Audio)
+    PLUSProcessMedia(Video)
+    PLUSProcessMedia(Content)
+
 	// Internal
     bool IsLoading();
 
@@ -150,11 +210,19 @@ protected:
     void SetLocalUserName(const PString & username);
     void InternalDoMethod(Method id, const PString & p1, const PString & p2, const PString & p3);
 
+    void ProcessMessages();
+    void ProcessMediaSamples();
+
 private:
     PlusEndPoint *  m_endpoint;
     PLUSdevice*     m_eventCallBack;
     PThread *       m_endpointThread;
     PDECLARE_NOTIFIER(PThread, PlusProcess, ThreadEndpoint);
+
+    Messages            m_messages;
+    Messages::Msg       m_msg;
+    Sample              m_mediaBuffer;
+
 #ifdef H323_DATASTORE
     H323DataStore * m_dataStore;
 #endif

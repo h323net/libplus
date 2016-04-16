@@ -20,6 +20,72 @@
 
 #pragma once
 
+#include <vector>
+#include <map>
+#include <queue>
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///
+
+class PlusEndpoint;
+class PlusMediaManager : public H323_MediaManager
+{
+public:
+
+    PlusMediaManager();
+
+    enum MediaStream {
+        e_audioIn,
+        e_audioOut,
+        e_videoIn,
+        e_videoOut,
+        e_extVideoIn,
+        e_extVideoOut,
+        e_NoOfMediaStream
+    };
+
+    struct Sample : public PBYTEArray
+    {
+        Sample(void * data, unsigned size, unsigned width=0, unsigned height=0);
+
+        unsigned m_width;
+        unsigned m_height;
+    };
+
+    struct Queue : public std::queue<Sample>
+    {
+        Queue();
+
+        Queue(unsigned width, unsigned height, const PString & format);
+
+        unsigned m_defWidth;
+        unsigned m_defHeight;
+        PString  m_format;
+        PMutex   m_mutex;
+        bool     m_shutdown;
+    };
+
+    PStringArray SupportedFormats(MediaStream dir);
+
+    bool ProcessMediaSamples(unsigned & id, void * data, unsigned & size, unsigned & width, unsigned & height);
+
+    // Audio Read/Write Functions
+    virtual PBoolean SetColourFormat(unsigned id, const PString & colourFormat);
+    virtual void     GetColourFormat(unsigned id, PString & colourFormat);
+
+    virtual PBoolean GetFrameSize(unsigned id, unsigned & width, unsigned & height);
+
+    virtual bool Write(unsigned id, void * data, unsigned size, unsigned width, unsigned height);
+    virtual bool Read(unsigned id, bool toBlock, void * data, unsigned & size, unsigned & width, unsigned & height);
+
+private:
+
+    map<unsigned,Queue> m_queueMedia;
+
+};
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 // PlusEndPoint MACROS
 
@@ -76,6 +142,10 @@
 #define PlusSetValue(name,val) \
     m_##name = val; \
     fire_is##name(m_##name);
+
+#define PlusMedia(name) \
+    bool in##name(void * data, int size, int width=0, int height=0); \
+    virtual bool out##name(void * data, int size, int width=0, int height=0) { return m_process.out##name(data, size, width, height); };
 
 
 class PlusEndPoint : public H323EndPoint
@@ -137,7 +207,11 @@ public:
     PlusSetting(initialised)
     PlusSetting(language)
     PlusSetting(listenport)
-    PlusSetting(secondVideo)
+
+    PlusSetting(videoformats)
+    PlusSetting(videoinformat)
+    PlusSetting(videooutformat)
+    PlusSetting(secondvideo)
 
     PlusSetting(encryptsignal)
     PlusSetting(encryptmedia)
@@ -192,6 +266,12 @@ public:
     // IMPL: Event Names here
 
 
+    // Media Handling
+    PlusMedia(Audio)
+    PlusMedia(Video)
+    PlusMedia(Content)
+
+
     // overrides from h323plus
     virtual H323Connection * CreateConnection(unsigned callReference, void * userData);
     virtual void OnConnectionEstablished(H323Connection & connection, const PString & token);
@@ -232,6 +312,7 @@ public:
     void StopH281Action();
 #endif
 
+    PlusMediaManager &  GetMediaManager();
 
 protected:
 
@@ -250,7 +331,6 @@ protected:
     void FireStatus(
         int status           // status from the EPStatus enumerator
         );
-
 
     void Initialise();
     void UnInitialise();
@@ -334,6 +414,8 @@ private:
 
     PBoolean    m_endpointIsSetup;
     PDirectory  m_libPath;
+
+    PlusMediaManager  m_mediaManager;
 
 #ifdef H323_DATASTORE
     H323DataStore & m_dataStore;                // Settings for the endpoint

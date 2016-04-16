@@ -18,12 +18,16 @@
  *
  */
 
+// for compatibility
+#define LIBPLUSDLL_VER  1282
+
 
 #ifdef LIBPLUSDLL_EXPORTS
 #define LIBPLUSDLL_API __declspec(dllexport)
 #else
 #define LIBPLUSDLL_API __declspec(dllimport)
 #endif
+
 
 #define libDLLSetting(name) \
   const char * get##name(); \
@@ -41,9 +45,20 @@ void do##name(const char * str1, const char * str2);
 #define libDLLMethod3(name) \
 void do##name(const char * str1, const char * str2, const char * str3);
 
+#define libDLLEvent(name) \
+virtual void on##name();
+
+#define libDLLEvent1(name) \
+virtual void on##name(const char * str1);
+
+#define libDLLMedia(name) \
+bool in##name(void * data, int size, int width=0, int height=0); \
+virtual bool out##name(void * data, int size, int width=0, int height=0);
+
 
 // This class is exported from the libPLUS.dll
-class PLUSdevice;
+
+class DLL_PLUSdevice;
 class LIBPLUSDLL_API libPLUS {
 public:
 	libPLUS(void);
@@ -100,12 +115,19 @@ public:
     libDLLSetting(initialised)
     libDLLSetting(language)
     libDLLSetting(listenport)
+
+    libDLLSetting(videoformats)
+    libDLLSetting(videoinformat)
+    libDLLSetting(videooutformat)
+    libDLLSetting(secondvideo)
+
     libDLLSetting(encryptSignal)
     libDLLSetting(encryptMedia)
     libDLLSetting(encryptMediaHigh)
-     // IMPL: Setting Name here
+    // IMPL: Setting Names Here
 
-     // Methods
+
+    // Methods
     libDLLMethod1(placeCall)
     libDLLMethod0(hangupCall)
     libDLLMethod0(answerCall)
@@ -118,10 +140,37 @@ public:
     libDLLMethod1(secondCall)
     libDLLMethod0(stop)
     libDLLMethod0(dhParameters)
-    // IMPL: Method Name here
+    // IMPL: Method Names here
+
+
+    // Events
+    //libDLLEvent(progress);
+    libDLLEvent1(status)
+    libDLLEvent1(isinitialised)
+    libDLLEvent1(videoframe)
+    libDLLEvent1(callerid)
+    libDLLEvent1(incomingcall)
+    libDLLEvent1(incall)
+    libDLLEvent1(encryption)
+    libDLLEvent1(farEndCameraInstruct)
+    libDLLEvent1(realTimeTextInstruct)
+    libDLLEvent1(farEndMotoisedInstruct)
+    libDLLEvent1(PhoneNumberEvent)
+    libDLLEvent1(URIaddressEvent)
+    libDLLEvent1(presenceSupport)
+    libDLLEvent(duplicate)
+    libDLLEvent1(forwardCall)
+    libDLLEvent1(dhGenerate)
+    // IMPL: Event Names here
+
+    // Media
+    libDLLMedia(Audio)
+    libDLLMedia(Video)
+    libDLLMedia(Content)
+
 
 private:
-    PLUSdevice * m_Impl;
+    DLL_PLUSdevice * m_Impl;
 };
 
 

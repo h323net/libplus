@@ -23,16 +23,16 @@
 #include "pluslang.h"
 
 #include <ptclib/pdns.h>
-
 #include <h235/h235support.h>
 
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Utilities
+// Media Buffer Handling
 
 /* Serialise
-    Convert an array of strings into a stream seperated by ;
-    @return@
-    A ; deliminated string
+Convert an array of strings into a stream seperated by ;
+@return@
+A ; deliminated string
 */
 PString Serialise(const PStringArray & strarray) {
 
@@ -48,6 +48,145 @@ PString Serialise(const PStringArray & strarray) {
     ser += strarray[strarray.GetSize() - 1].Trim();
     return ser;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static struct {
+    PlusMediaManager::MediaStream id;
+    unsigned width;
+    unsigned height;
+    PString  format;
+} defaultMedia[PlusMediaManager::e_NoOfMediaStream] = {
+    { PlusMediaManager::e_audioIn,      0, 0, "" },
+    { PlusMediaManager::e_audioOut,     0, 0, "" },
+    { PlusMediaManager::e_videoIn,      0, 0, defVideoFormat },
+    { PlusMediaManager::e_videoOut,     0, 0, defVideoFormat },
+    { PlusMediaManager::e_extVideoIn,   0, 0, defVideoFormat },
+    { PlusMediaManager::e_extVideoOut,  0, 0, defVideoFormat }
+};
+
+
+PlusMediaManager::PlusMediaManager()
+{
+    // Initialise the manager
+    for (unsigned i = 0; i < e_NoOfMediaStream; ++i)
+        m_queueMedia.insert(make_pair(i, Queue(defaultMedia[i].width, defaultMedia[i].height, defaultMedia[i].format)));
+}
+
+
+PlusMediaManager::Sample::Sample(void * data, unsigned size, unsigned width, unsigned height)
+: PBYTEArray((BYTE*)data,size), m_width(width), m_height(height)
+{
+
+}
+
+
+PlusMediaManager::Queue::Queue()
+: m_defWidth(0), m_defHeight(0), m_format(""), m_shutdown(false)
+{
+
+}
+
+
+PlusMediaManager::Queue::Queue(unsigned width, unsigned height, const PString & format)
+: m_defWidth(width), m_defHeight(height), m_format(format), m_shutdown(false)
+{
+
+}
+
+
+PStringArray PlusMediaManager::SupportedFormats(MediaStream dir)
+{
+    switch (dir) {
+        case e_audioIn:
+        case e_audioOut:
+            return "PCM";
+
+        case e_videoIn:
+        case e_extVideoIn:
+            return Serialise(H323ColourConverter::GetColourConverterList(m_queueMedia[e_videoIn].m_format, false));
+
+        case e_videoOut:
+        case e_extVideoOut:
+            return Serialise(H323ColourConverter::GetColourConverterList(m_queueMedia[e_videoOut].m_format, true));
+        default:
+            return "";
+    }
+}
+
+void PlusMediaManager::GetColourFormat(unsigned id, PString & colourFormat)
+{
+    colourFormat = m_queueMedia[id].m_format;
+}
+
+
+
+PBoolean PlusMediaManager::SetColourFormat(unsigned id, const PString & colourFormat)
+{
+    m_queueMedia[id].m_format = colourFormat;
+    return true;
+}
+
+
+PBoolean PlusMediaManager::GetFrameSize(unsigned id, unsigned & width, unsigned & height)
+{
+    Queue & q = m_queueMedia[id];
+    width = q.m_defWidth;
+    height = q.m_defHeight;
+
+    return true;
+}
+
+bool PlusMediaManager::ProcessMediaSamples(unsigned & id, void * data, unsigned & size, unsigned & width, unsigned & height)
+{
+    // Initialise the manager
+    for (unsigned i = 1; i < e_NoOfMediaStream; i += 2) {
+        if (Read(i, false, data, size, width, height)) {
+            id = i;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool PlusMediaManager::Write(unsigned id, void * data, unsigned size, unsigned width, unsigned height)
+{
+    Queue & q = m_queueMedia[id];
+
+    q.m_mutex.Wait();
+        q.push(Sample(data, size, width, height));
+    q.m_mutex.Signal();
+
+    return true;
+}
+
+
+bool PlusMediaManager::Read(unsigned id, bool toBlock, void * data, unsigned & size, unsigned & width, unsigned & height)
+{
+    Queue & q = m_queueMedia[id];
+
+    if (!toBlock) {
+        if (!q.size()) return false;
+    } else {
+        while (!q.m_shutdown && !q.size())
+            PThread::Sleep(3);
+    }  
+
+    q.m_mutex.Wait();
+        Sample & media = q.front();
+        width = media.m_width;
+        height = media.m_height;
+        size = media.GetSize();
+        memcpy(data, media.GetPointer(), size);
+        q.pop();
+    q.m_mutex.Signal();
+
+    return true;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// endpoint Utilities
 
 /* GetSoundDevice
 get a usuable sound device for a given direction
@@ -130,7 +269,7 @@ PString GetDefaultDevice(PlusProcess::Setting setting, const PString & driver)
         case PlusProcess::e_videorec:      return GetVideoDevice(true, driver); 
         case PlusProcess::e_audioplay:     return GetSoundDevice(false, driver); 
         case PlusProcess::e_audiorec:      return GetSoundDevice(true, driver); 
-    default: return PString();
+        default: return PString();
     }
 }
 
@@ -147,7 +286,7 @@ PString GetDeviceList(PlusProcess::Setting setting, const PString & driver)
         case PlusProcess::e_devvideorec:      EnumerateVideoDevices(true, driver, devices); break;
         case PlusProcess::e_devaudioplay:     EnumerateSoundDevices(false, driver, devices); break;
         case PlusProcess::e_devaudiorec:      EnumerateSoundDevices(true, driver, devices); break;
-    default: break;
+        default: break;
     }
     return Serialise(devices);
 }
@@ -191,8 +330,7 @@ PlusEndPoint::PlusEndPoint(PlusProcess & process)
    ,m_dataStore(_data)
 #endif
 {
-    // Set the endpoint Local UserName.
-    
+
     InitialiseSettings();
 
     DEVICE_DECL(videoplay)
@@ -200,6 +338,8 @@ PlusEndPoint::PlusEndPoint(PlusProcess & process)
     DEVICE_DECL(audioplay)
     DEVICE_DECL(audiorec)
 
+    m_videoformats = Serialise(m_mediaManager.SupportedFormats(PlusMediaManager::e_videoOut));
+    
     m_framewidth = PString(defDisplayWidth);
     m_frameheight = PString(defDisplayHeight);
 }
@@ -226,6 +366,22 @@ void PlusEndPoint::InitialiseSettings()
     INIT_SET(accessability, "0") 
     INIT_SET(content, "0")
     INIT_SET(autoanswer, "0") 
+    // drvvideoplay
+    // drvvideorec
+    // drvaudioplay
+    // drvaudiorec
+    // curdrvvideoplay
+    // curdrvvideorec
+    // curdrvaudioplay
+    // curdrvaudiorec
+    // devvideoplay
+    // devvideorec
+    // devaudioplay
+    // devaudiorec
+    // audiorec
+    // audioplay
+    // videoplay
+    // videorec
     INIT_SET(call, "") 
     INIT_SET(audiomute,"0") 
     INIT_SET(videomute,"0")
@@ -242,7 +398,10 @@ void PlusEndPoint::InitialiseSettings()
     INIT_SET(initialised, "0") 
     INIT_SET(language, defLanguage)
     INIT_SET(listenport, defListenport)
-    INIT_SET(secondVideo, "0")
+    // videoformats
+    INIT_SET(videoinformat, defVideoFormat)
+    INIT_SET(videooutformat, defVideoFormat)
+    INIT_SET(secondvideo, "0")
 
     INIT_SET(encryptsignal, "1") 
     INIT_SET(encryptmedia, "1")
@@ -411,7 +570,7 @@ PBoolean PlusEndPoint::OpenVideoChannel(H323Connection & connection, PBoolean is
         // set fixed list of resolutions for drivers that don't provide a list
         if (videoCaps.framesizes.size() == 0) {
             PVideoFrameInfo cap;
-            cap.SetColourFormat("YUV420P");
+            cap.SetColourFormat(defVideoFormat);
             cap.SetFrameRate(30);
             // sizes must be from largest to smallest
             cap.SetFrameSize(1280, 720);
@@ -426,7 +585,7 @@ PBoolean PlusEndPoint::OpenVideoChannel(H323Connection & connection, PBoolean is
 
     if (!device->SetFrameSize(codec.GetWidth(), codec.GetHeight()) ||
         !device->SetFrameRate(codec.GetFrameRate()) ||
-        !device->SetColourFormatConverter("YUV420P")) {
+        !device->SetColourFormatConverter(defVideoFormat)) {
         PTRACE(1, "Failed to configure the video device \"" << deviceName << '"');
         return FALSE;
     }
@@ -610,7 +769,7 @@ PBoolean PlusEndPoint::InitialiseEndpoint()
 
     capabilities.Remove("G.722.1-24");
 
-    if (!m_secondVideo.AsInteger()) {
+    if (!m_secondvideo.AsInteger()) {
         capabilities.Remove("h.239*");
         RemoveCapability(H323Capability::e_ExtendVideo);
         RemoveCapability(H323Capability::e_GenericControl);
@@ -889,6 +1048,12 @@ void PlusEndPoint::FireStatus(int status)
     fire_status(PString(status), UXStatus(m_language, status));
 }
 
+
+PlusMediaManager & PlusEndPoint::GetMediaManager()
+{
+    return m_mediaManager;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef H323_TLS   
@@ -1071,6 +1236,25 @@ void PlusEndPoint::InitialiseDebug()
 #endif  // PTRACING
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Media
+
+
+bool PlusEndPoint::inAudio(void * data, int size, int width, int height)
+{
+    return false;
+}
+
+bool PlusEndPoint::inVideo(void * data, int size, int width, int height)
+{
+    return false;
+}
+
+bool PlusEndPoint::inContent(void * data, int size, int width, int height)
+{
+    return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities
 
 PStringList PlusEndPoint::GetConfigurationSections() const
@@ -1174,6 +1358,8 @@ PBoolean PlusEndPoint::H224ReceivedSettings(const PString & id, BYTE cpid, const
 #endif
     return false;
 }
+
+
 
 
 
