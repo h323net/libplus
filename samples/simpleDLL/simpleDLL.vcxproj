@@ -81,7 +81,9 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(ProjectName)\$(Platform)\$(PlatformToolset)\</OutDir>
     <IntDir>$(OutDir)$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)d</TargetName>
+    <TargetName>$(ProjectName)64d</TargetName>
+    <IncludePath>$(ProjectDir)..\..\platform\WinDLL;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\lib\$(Platform)\$(PlatformToolset);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -94,6 +96,9 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(ProjectName)\$(Platform)\$(PlatformToolset)\</OutDir>
     <IntDir>$(OutDir)$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)..\..\platform\WinDLL;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\lib\$(Platform)\$(PlatformToolset);$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -130,6 +135,10 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y $(ProjectDir)..\..\lib\$(Platform)\$(PlatformToolset)\libPLUS64dlld.dll  $(SolutionDir)bin\$(ProjectName)\$(Platform)\$(PlatformToolset)\libPLUS64dlld.dll</Command>
+      <Message>Copying Supporting Files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -168,6 +177,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y $(ProjectDir)..\..\lib\$(Platform)\$(PlatformToolset)\libPLUS64dll.dll  $(SolutionDir)bin\$(ProjectName)\$(Platform)\$(PlatformToolset)\libPLUS64dll.dll</Command>
+      <Message>Copying Supporting Files</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

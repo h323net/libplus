@@ -20,10 +20,21 @@
 
 #include "stdafx.h"
 
-#if _DEBUG
-#pragma comment(lib,"libPLUSdlld.lib")
-#else
-#pragma comment(lib,"libPLUSdll.lib")
+
+#ifdef _WIN32
+    #ifdef _WIN64
+        #ifndef _DEBUG
+            #pragma comment(lib,"libPLUS64dll.lib")
+        #else
+            #pragma comment(lib,"libPLUS64dlld.lib")
+        #endif
+    #else
+        #ifndef _DEBUG
+            #pragma comment(lib,"libPLUSdll.lib")
+        #else
+            #pragma comment(lib,"libPLUSdlld.lib")
+        #endif
+    #endif
 #endif
 
 
