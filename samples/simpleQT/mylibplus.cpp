@@ -1,5 +1,5 @@
 /*
- * mainwindow.cpp
+ * mylibplus.cpp
  *
  * Copyright (c) 2016 ISVO (Asia) Pte Ltd. All Rights Reserved.
  *
@@ -17,40 +17,22 @@
  *
  */
 
-
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
-
 #include "mylibplus.h"
+#include "mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
-{
-    m_libPLUS = new mylibPLUS(this);
-    m_libPLUS->Load();
+#define mylibDLLEvtBody(name) \
+void mylibPLUS::on##name() {}
 
+#define mylibDLLEvtBody1(name) \
+void mylibPLUS::on##name(const char * /*str1*/) {}
 
-    ui->setupUi(this);
-}
-
-MainWindow::~MainWindow()
-{
-    m_libPLUS->Unload();
-    delete m_libPLUS;
-
-    delete ui;
-}
-
-
-void MainWindow::OnVideoImage(int id, uchar * data, int width, int height)
+mylibPLUS::mylibPLUS(MainWindow * window)
+: m_window(window)
 {
 
-    QImage img(data,width,height, QImage::Format_RGB32);
-    QVideoFrame frame(img.copy());
-
-    m_mutex.lock();
-        m_frames.insert(std::pair<int,QVideoFrame>(id,frame));
-    m_mutex.unlock();
-
 }
+
+mylibDLLEvtBody1(status)
+// IMPL: Event Names here
+
+

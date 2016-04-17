@@ -1,5 +1,5 @@
 /*
- * maimwindow.h
+ * mylibplus.h
  *
  * Copyright (c) 2016 ISVO (Asia) Pte Ltd. All Rights Reserved.
  *
@@ -18,38 +18,26 @@
  */
 
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MYLIBPLUS_H
+#define MYLIBPLUS_H
 
-#include <QMainWindow>
+#include <libPLUSdll.h>
 
-#include <map>
-#include <QMutex>
-#include <QVideoFrame>
 
-namespace Ui {
 class MainWindow;
-}
-
-class mylibPLUS;
-class MainWindow : public QMainWindow
+class mylibPLUS  : public libPLUS
 {
-    Q_OBJECT
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+  public:
 
+    mylibPLUS(MainWindow * window);
 
-    void OnVideoImage(int id, uchar * data, int width, int height);
+    libDLLEvent1(status)
+    // IMPL: Event Names here
 
-private:
-    Ui::MainWindow *ui;
+  private:
+    MainWindow * m_window;
 
-    mylibPLUS * m_libPLUS;
-
-    QMutex                    m_mutex;
-    std::map<int,QVideoFrame> m_frames;
 };
 
-#endif // MAINWINDOW_H
+#endif // MYLIBPLUS_H
