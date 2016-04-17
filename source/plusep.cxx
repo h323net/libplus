@@ -62,7 +62,8 @@ static struct {
     { PlusMediaManager::e_videoIn,      0, 0, defVideoFormat },
     { PlusMediaManager::e_videoOut,     0, 0, defVideoFormat },
     { PlusMediaManager::e_extVideoIn,   0, 0, defVideoFormat },
-    { PlusMediaManager::e_extVideoOut,  0, 0, defVideoFormat }
+    { PlusMediaManager::e_extVideoOut,  0, 0, defVideoFormat },
+    { PlusMediaManager::e_localVideoOut,0, 0, defVideoFormat }
 };
 
 

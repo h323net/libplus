@@ -41,6 +41,7 @@ public:
         e_videoOut,
         e_extVideoIn,
         e_extVideoOut,
+        e_localVideoOut,
         e_NoOfMediaStream
     };
 
