@@ -46,6 +46,9 @@ public:
     // Events
     virtual void Event(int evtID, const char * p1 = "", const char * p2 = "", const char * p3 = "", const char * p4 = "")
     {
+        if (m_dev.HandleEvent(evtID, p1, p2, p3, p4))
+            return;
+
         switch (evtID) {
             libDLLEvtOpt1(status)
             libDLLEvtOpt1(isinitialised)
@@ -208,8 +211,13 @@ libDLLMethBody0(stop)
 libDLLMethBody0(dhParameters)
 // IMPL: Method Names here
 
-
 // Events
+bool libPLUS::HandleEvent(int id, const char * /*str1*/, 
+                         const char * /*str2*/, const char * /*str3*/, const char * /*str4*/)
+{
+    return false;
+}
+
 //libDLLEvtBody(progress);
 libDLLEvtBody1(status)
 libDLLEvtBody1(isinitialised)

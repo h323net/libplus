@@ -142,8 +142,33 @@ public:
     libDLLMethod0(dhParameters)
     // IMPL: Method Names here
 
-
     // Events
+    enum Event {
+        e_status = 1,
+        e_isinitialised,
+        e_videoframe,
+        e_callerid,
+        e_incomingcall,
+        e_incall,
+        e_encryption,
+        e_ish281call,
+        e_ist140call,
+        e_ish284call,
+        e_isusere164,
+        e_isuseruri,
+        e_presence,
+        e_duplicate,
+        e_forwardcall,
+        e_dhGenerate,
+        e_userEvent = 1000
+        // IMPL: Event Names Here
+    };
+
+    // Event Handler
+    // To collect all events override this function and return true.
+    virtual bool HandleEvent(int id, const char * str1, const char * str2, 
+                                     const char * str3, const char * str4);
+
     //libDLLEvent(progress);
     libDLLEvent1(status)
     libDLLEvent1(isinitialised)
