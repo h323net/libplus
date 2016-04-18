@@ -36,8 +36,7 @@ public:
 
     void AddMessage(int id, const PString & v1, const PString & v2, const PString & v3) {
         PWaitAndSignal m(lMute);
-        Msg newMsg(id, v1, v2, v3);
-        lBuffer.push(newMsg);
+        lBuffer.push(Msg(id, v1, v2, v3));
     };
 
     PBoolean GetMessage(Msg & msg) {
