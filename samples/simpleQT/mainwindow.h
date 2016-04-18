@@ -23,9 +23,14 @@
 
 #include <QMainWindow>
 
+#include <vector>
 #include <map>
+#include <queue>
+#include <QTimer>
 #include <QMutex>
 #include <QVideoFrame>
+
+#include <QDebug>
 
 namespace Ui {
 class MainWindow;
@@ -40,16 +45,46 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    bool ProcessEvents();
+    bool ProcessFrames();
 
-    void OnVideoImage(int id, uchar * data, int width, int height);
+    struct PlusEvent {
+        int id;
+        QString str1;
+        QString str2;
+        QString str3;
+        QString str4;
+    };
+    void OnLibPlusEvent(int id, QString str1="", QString str2="", QString str3="", QString str4="");
+
+
+    struct PlusImage {
+        int         id;
+        QVideoFrame frame;
+    };
+    void OnLibPlusImage(int id, uchar * data, int width, int height);
+
+
+public slots:
+    /**
+     * @brief update
+     * Fires every x milliseconds to process messages from libPLUS
+     */
+    void update();
 
 private:
     Ui::MainWindow *ui;
 
     mylibPLUS * m_libPLUS;
 
-    QMutex                    m_mutex;
-    std::map<int,QVideoFrame> m_frames;
+    // Manage Events
+    QTimer *                  m_timer;       ///< event timer
+    std::queue<PlusEvent>     m_events;      ///< libPlus Events
+    QMutex                    m_mutEvents;
+    std::queue<PlusImage>     m_frames;      ///< libPlus Video Images
+    QMutex                    m_mutFrames;
+
+    bool                      m_shutDown;
 };
 
 #endif // MAINWINDOW_H

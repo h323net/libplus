@@ -32,7 +32,23 @@ mylibPLUS::mylibPLUS(MainWindow * window)
 
 }
 
-mylibDLLEvtBody1(status)
+bool mylibPLUS::HandleEvent(int id, const char * str1, const char * str2,
+                                    const char * str3, const char * str4)
+{
+    qDebug() << "Event Rec'd " << id << " " << QString(str1) << " " << QString(str2);
+
+    switch (id) {
+     case e_status:
+        m_window->OnLibPlusEvent(id,str1, str2, str3, str4);
+        break;
+     default:
+        return true;
+    }
+
+    return true;
+}
+
+// mylibDLLEvtBody1(status)
 // IMPL: Event Names here
 
 

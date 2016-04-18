@@ -32,7 +32,12 @@ class mylibPLUS  : public libPLUS
 
     mylibPLUS(MainWindow * window);
 
-    libDLLEvent1(status)
+    // Collective Event Handler
+    virtual bool HandleEvent(int id, const char * str1, const char * str2,
+                                     const char * str3, const char * str4);
+
+    // Collect individual Events
+    // libDLLEvent1(status)
     // IMPL: Event Names here
 
   private:
