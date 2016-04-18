@@ -69,6 +69,11 @@ namespace libPLUS_CSharp
             plus = null;
         }
 
+        private static void plus_status(string p1, string p2)
+        {
+            Console.WriteLine("Status: {0} {1}", p1, p2);
+        }
+
         private static void plus_incomingcall(string p1)
         {
             Console.WriteLine("Incoming call: {0}", p1);
@@ -97,11 +102,6 @@ namespace libPLUS_CSharp
         private static void plus_callerid(string p1)
         {
             Console.WriteLine("CallerID: {0}", p1);
-        }
-
-        private static void plus_status(string p1)
-        {
-            Console.WriteLine("Status: {0}", p1);
         }
 
         private static void plus_isinitialised(string p1)
