@@ -22,6 +22,9 @@ namespace libPLUS_CSharp
             plus.incomingcall += plus_incomingcall;
             plus.dhGenerate += plus_dhGenerate;
 
+            // Load the libPLUS stack
+            plus.Load();
+
             // Initialisation Settings
             plus.tracing = "6";
             plus.curdrvvideorec = "DirectShow";
@@ -39,6 +42,7 @@ namespace libPLUS_CSharp
                 Console.WriteLine("{0}={1}", prop.Name, prop.GetValue(plus, null));
             }
 
+            // Start the libPLUS application
             plus.start();
 
             bool shutDown = false;
@@ -57,7 +61,11 @@ namespace libPLUS_CSharp
   
             }
 
+            // Stop the libPLUS application
             plus.stop();
+
+            // Unload the libPLUS stack
+            plus.Unload(); 
             plus = null;
         }
 

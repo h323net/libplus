@@ -65,19 +65,35 @@ void CLR_PLUSdevice::Event(int evtID, const char * p1, const char * p2, const ch
 namespace libplus {
 
     libPLUS::libPLUS()
-        : m_Impl(new CLR_PLUSdevice)
+        : m_Impl(NULL)
     {
         initialize();
     }
 
     libPLUS::~libPLUS() 
     {
-        delete m_Impl;
+        Unload();
     }
 
     libPLUS::!libPLUS() 
     {
-        delete m_Impl;
+        Unload();
+    }
+
+    void libPLUS::Load()
+    {
+        m_Impl = new CLR_PLUSdevice();
+        do {
+            Sleep(100);
+        } while (m_Impl->IsLoading());
+    }
+
+    void libPLUS::Unload()
+    {
+        if (m_Impl) {
+            delete m_Impl;
+            m_Impl = NULL;
+        }
     }
 
 }

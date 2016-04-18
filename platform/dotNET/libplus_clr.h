@@ -181,32 +181,11 @@ namespace libplus {
             // Deallocate the native object on a destructor
             ~libPLUS();
 
-            void initialize()
-            {
-                libNETInitial(status)
-                libNETInitial(isinitialised)
-                libNETInitial(videoframe)
-                libNETInitial(callerid)
-                libNETInitial(incomingcall)
-                libNETInitial(incall)
-                libNETInitial(encryption)
-                libNETInitial(farEndCameraInstruct)
-                libNETInitial(realTimeTextInstruct)
-                libNETInitial(farEndMotoisedInstruct)
-                libNETInitial(PhoneNumberEvent)
-                libNETInitial(URIaddressEvent)
-                libNETInitial(presenceSupport)
-                libNETInitial(duplicate)
-                libNETInitial(forwardCall)
-                libNETInitial(dhGenerate)
-                // IMPL: Event Names here
-            }
+            void Load();
 
-        protected:
-            // Deallocate the native object on the finalizer just in case no destructor is called
-            !libPLUS();
+            void Unload();
 
-        public:
+
             // Settings
             libNETSetting(version)
             libNETSetting(tracing)
@@ -300,8 +279,32 @@ namespace libplus {
             libNETEvent1(dhGenerate);
             // IMPL: Event Names here
 
+        protected:
+            // Deallocate the native object on the finalizer just in case no destructor is called
+            !libPLUS();
 
         private:
+            void initialize()
+            {
+                libNETInitial(status)
+                libNETInitial(isinitialised)
+                libNETInitial(videoframe)
+                libNETInitial(callerid)
+                libNETInitial(incomingcall)
+                libNETInitial(incall)
+                libNETInitial(encryption)
+                libNETInitial(farEndCameraInstruct)
+                libNETInitial(realTimeTextInstruct)
+                libNETInitial(farEndMotoisedInstruct)
+                libNETInitial(PhoneNumberEvent)
+                libNETInitial(URIaddressEvent)
+                libNETInitial(presenceSupport)
+                libNETInitial(duplicate)
+                libNETInitial(forwardCall)
+                libNETInitial(dhGenerate)
+                // IMPL: Event Names here
+            }
+
             CLR_PLUSdevice * m_Impl;
 
 	};
