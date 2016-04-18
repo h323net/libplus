@@ -113,7 +113,7 @@ std::string StatusString_EN(int status)
         case uiEndedByInvalidNumberFormat:  str = "Invalid Number Format";      break;
         case uiEndedByUnspecifiedProtocolError:  str = "Unspecified Error";     break;
         case uiEndedByNoFeatureSupport:     str = "No Feature Support";         break;
-        default:                            str = "Unkown status";
+        default:                            str = "Unknown status";
     }
 
     return str;
