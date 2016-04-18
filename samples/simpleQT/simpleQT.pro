@@ -28,8 +28,10 @@ FORMS    += mainwindow.ui
 
 
 # libPLUS DLL
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/x64/v140/ -llibPLUS64dll
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/x64/v140/ -llibPLUS64dlld
+win64:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/x64/v140/ -llibPLUS64dll
+else:win64:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/x64/v140/ -llibPLUS64dlld
+else:win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/Win32/v140/ -llibPLUSdll
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/Win32/v140/ -llibPLUSdlld
 
 INCLUDEPATH += $$PWD/../../platform/WinDLL
 DEPENDPATH += $$PWD/../../platform/WinDLL

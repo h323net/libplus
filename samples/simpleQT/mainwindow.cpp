@@ -23,20 +23,25 @@
 
 #include "mylibplus.h"
 
+////////////////////////////////////////////////////////
+// Constructor
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow), m_shutDown(false)
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
     m_libPLUS = new mylibPLUS(this);
     m_libPLUS->Load();
 
+    // debugging
+    m_libPLUS->settracing("6");
+
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
-    m_timer->start(5);
 
-    m_libPLUS->dostart();
+    m_timer->start(5);
 }
 
 MainWindow::~MainWindow()
@@ -44,10 +49,12 @@ MainWindow::~MainWindow()
     m_libPLUS->dostop();
     m_libPLUS->Unload();
     delete m_libPLUS;
-
+    delete m_timer;
     delete ui;
 }
 
+////////////////////////////////////////////////////////
+// Event handling
 
 void MainWindow::OnLibPlusEvent(int id, QString str1, QString str2, QString str3, QString str4)
 {
@@ -83,14 +90,25 @@ void MainWindow::update()
     QMainWindow::update();
 }
 
-
 bool MainWindow::ProcessEvents()
 {
     while (m_events.size() > 0) {
         PlusEvent & evt = m_events.front();
+        bool success(evt.str1.toInt()==1);
         switch (evt.id) {
             case libPLUS::e_status:
-               ui->txtStatus->addItem(evt.str1 + QString(" ") + evt.str2);
+                ui->lblStatus->setText(evt.str2);
+                break;
+            case libPLUS::e_isinitialised:
+                EnableDisplay(success);
+                break;
+            case libPLUS::e_incall:
+                SetInCall(success);
+                break;
+            case libPLUS::e_callerid:
+
+            case libPLUS::e_incomingcall:
+
                break;
             default:
                break;
@@ -105,9 +123,6 @@ bool MainWindow::ProcessEvents()
 
 bool MainWindow::ProcessFrames()
 {
-      if (m_shutDown)
-          return false;
-
       while (m_frames.size() > 0) {
         PlusImage & img = m_frames.front();
         switch (img.id) {
@@ -121,5 +136,61 @@ bool MainWindow::ProcessFrames()
         m_frames.pop();
         m_mutFrames.lock();
     }
-    return !m_shutDown;
+    return true;
+}
+
+
+////////////////////////////////////////////////////////
+// UI functions
+
+void MainWindow::EnableDisplay(bool toEnable)
+{
+    if (toEnable) {
+        ui->btnStart->setText("Stop");
+
+    } else {
+        ui->btnStart->setText("Start");
+        ui->lblStatus->setText("");
+    }
+
+    ui->btnCall->setEnabled(toEnable);
+    ui->lblNumber->setEnabled(toEnable);
+}
+
+void MainWindow::SetInCall(bool inCall)
+{
+    if (inCall) {
+        ui->btnCall->setText("HangUp");
+        ui->lblNumber->setEnabled(false);
+        ui->btnCall->setChecked(true);
+        ui->btnStart->setEnabled(false);
+    } else {
+        ui->btnCall->setText("Call");
+        ui->btnCall->setChecked(false);
+        ui->lblNumber->setEnabled(true);
+        ui->lblNumber->setText("");
+        ui->btnStart->setEnabled(true);
+    }
+}
+
+////////////////////////////////////////////////////////
+// UI Events
+
+void MainWindow::on_btnStart_clicked(bool checked)
+{
+    if (checked) {
+        m_libPLUS->dostart();
+    } else {
+        m_libPLUS->dostop();
+    }
+}
+
+void MainWindow::on_btnCall_clicked(bool checked)
+{
+    QString number = ui->lblNumber->text();
+    if (checked && (number.size() >0)) {
+        m_libPLUS->doplaceCall(number.toStdString().c_str());
+    } else {
+        m_libPLUS->dohangupCall();
+    }
 }

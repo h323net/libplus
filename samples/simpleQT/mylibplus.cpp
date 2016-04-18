@@ -39,6 +39,10 @@ bool mylibPLUS::HandleEvent(int id, const char * str1, const char * str2,
 
     switch (id) {
      case e_status:
+     case e_isinitialised:
+     case e_callerid:
+     case e_incomingcall:
+     case e_incall:
         m_window->OnLibPlusEvent(id,str1, str2, str3, str4);
         break;
      default:

@@ -45,6 +45,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    // Event Processing
     bool ProcessEvents();
     bool ProcessFrames();
 
@@ -72,6 +73,15 @@ public slots:
      */
     void update();
 
+private slots:
+    void on_btnStart_clicked(bool checked);
+
+    void on_btnCall_clicked(bool checked);
+
+protected:
+    void EnableDisplay(bool toEnable);
+    void SetInCall(bool inCall);
+
 private:
     Ui::MainWindow *ui;
 
@@ -84,7 +94,6 @@ private:
     std::queue<PlusImage>     m_frames;      ///< libPlus Video Images
     QMutex                    m_mutFrames;
 
-    bool                      m_shutDown;
 };
 
 #endif // MAINWINDOW_H
