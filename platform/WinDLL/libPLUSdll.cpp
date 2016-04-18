@@ -30,6 +30,15 @@ case PLUSdevice::e_##name: m_dev.on##name(); break;
 #define libDLLEvtOpt1(name) \
 case PLUSdevice::e_##name: m_dev.on##name(p1); break;
 
+#define libDLLEvtOpt2(name) \
+case PLUSdevice::e_##name: m_dev.on##name(p1,p2); break;
+
+#define libDLLEvtOpt3(name) \
+case PLUSdevice::e_##name: m_dev.on##name(p1,p2,p3); break;
+
+#define libDLLEvtOpt4(name) \
+case PLUSdevice::e_##name: m_dev.on##name(p1,p2,p3,p4); break;
+
 #define libDLLMediaDev(name) \
 virtual bool out##name(void * data, int size, int width=0, int height=0) { return m_dev.out##name(data, size, width, height); }
 
@@ -50,7 +59,7 @@ public:
             return;
 
         switch (evtID) {
-            libDLLEvtOpt1(status)
+            libDLLEvtOpt2(status)
             libDLLEvtOpt1(isinitialised)
             libDLLEvtOpt1(videoframe)
             libDLLEvtOpt1(callerid)
@@ -109,6 +118,15 @@ void libPLUS::on##name() {}
 
 #define libDLLEvtBody1(name) \
 void libPLUS::on##name(const char * str1) {}
+
+#define libDLLEvtBody2(name) \
+void libPLUS::on##name(const char * str1, const char * str2) {}
+
+#define libDLLEvtBody3(name) \
+void libPLUS::on##name(const char * str1, const char * str2, const char * str3) {}
+
+#define libDLLEvtBody4(name) \
+void libPLUS::on##name(const char * str1, const char * str2, const char * str3, const char * str4) {}
 
 #define libDLLMediaBody(name) \
 bool libPLUS::in##name(void * data, int size, int width, int height) {  return m_Impl->in##name(data, size, width, height); } \
@@ -219,7 +237,7 @@ bool libPLUS::HandleEvent(int id, const char * /*str1*/,
 }
 
 //libDLLEvtBody(progress);
-libDLLEvtBody1(status)
+libDLLEvtBody2(status)
 libDLLEvtBody1(isinitialised)
 libDLLEvtBody1(videoframe)
 libDLLEvtBody1(callerid)

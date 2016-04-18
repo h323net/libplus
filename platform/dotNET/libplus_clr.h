@@ -42,12 +42,24 @@ name##_ANSWERCB name##_cb;
 typedef int(__stdcall* name##_ANSWERCB)(const char *); \
 name##_ANSWERCB name##_cb;
 
+#define libNETCLR2(name) \
+typedef int(__stdcall* name##_ANSWERCB)(const char *, const char *); \
+name##_ANSWERCB name##_cb;
+
+#define libNETCLR3(name) \
+typedef int(__stdcall* name##_ANSWERCB)(const char *, const char *, const char *); \
+name##_ANSWERCB name##_cb;
+
+#define libNETCLR4(name) \
+typedef int(__stdcall* name##_ANSWERCB)(const char *, const char *, const char *, const char *); \
+name##_ANSWERCB name##_cb;
+
 class CLR_PLUSdevice  : public PLUSdevice
 {
     //and somewhere in a class that should be able to notify its progress declare a field of this type:
 public:
 
-    libNETCLR1(status)
+    libNETCLR2(status)
     libNETCLR1(isinitialised)
     libNETCLR1(videoframe)
     libNETCLR1(callerid)
@@ -128,11 +140,39 @@ void name##(String^ str1, String^ str2, String^ str3) { Managed_Call(m_Impl, PLU
 #define libNETEventDel1(name) \
 public delegate void name##_del(String^ p1);
 
+#define libNETEventDel2(name) \
+public delegate void name##_del(String^ p1, String^ p2);
+
+#define libNETEventDel3(name) \
+public delegate void name##_del(String^ p1, String^ p2, String^ p3);
+
+#define libNETEventDel4(name) \
+public delegate void name##_del(String^ p1, String^ p2, String^ p3, String^ p4);
+
 #define libNETEvent1(name) \
 public: \
 event name##_del^ name; \
 private: \
 void raise##name(String^ p1) { name##(p1); }
+
+#define libNETEvent2(name) \
+public: \
+event name##_del^ name; \
+private: \
+void raise##name(String^ p1, String^ p2) { name##(p1,p2); }
+
+#define libNETEvent3(name) \
+public: \
+event name##_del^ name; \
+private: \
+void raise##name(String^ p1, String^ p2, String^ p3) { name##(p1,p2,p3); }
+
+#define libNETEvent4(name) \
+public: \
+event name##_del^ name; \
+private: \
+void raise##name(String^ p1, String^ p2, String^ p3, String^ p4) { name##(p1,p2,p3,p4); }
+
 
 
 #define libNETEventDel(name) \
@@ -154,7 +194,7 @@ m_Impl->name##_cb = static_cast<CLR_PLUSdevice::name##_ANSWERCB>(name##_ip.ToPoi
 
 namespace libplus {
 
-    libNETEventDel1(status)
+    libNETEventDel2(status)
     libNETEventDel1(isinitialised)
     libNETEventDel1(videoframe)
     libNETEventDel1(callerid)
@@ -259,9 +299,8 @@ namespace libplus {
             libNETMethod0(dhParameters)
             // IMPL: Method Names here
 
-                // Events
-            //    libNETEvent(progress);
-            libNETEvent1(status)
+            // Events
+            libNETEvent2(status)
             libNETEvent1(isinitialised)
             libNETEvent1(videoframe)
             libNETEvent1(callerid)

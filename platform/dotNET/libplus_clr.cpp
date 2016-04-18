@@ -33,11 +33,20 @@ case PLUSdevice::e_##name: name##_cb(); break;
 #define libNETEVT1(name) \
 case PLUSdevice::e_##name: name##_cb(p1); break;
 
+#define libNETEVT2(name) \
+case PLUSdevice::e_##name: name##_cb(p1,p2); break;
+
+#define libNETEVT3(name) \
+case PLUSdevice::e_##name: name##_cb(p1,p2,p3); break;
+
+#define libNETEVT4(name) \
+case PLUSdevice::e_##name: name##_cb(p1,p2,p3,p4); break;
+
 void CLR_PLUSdevice::Event(int evtID, const char * p1, const char * p2, const char * p3, const char * p4) 
 {  
 
     switch (evtID) {
-        libNETEVT1(status)
+        libNETEVT2(status)
         libNETEVT1(isinitialised)
         libNETEVT1(videoframe)
         libNETEVT1(callerid)

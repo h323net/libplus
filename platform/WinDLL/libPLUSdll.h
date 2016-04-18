@@ -51,6 +51,15 @@ virtual void on##name();
 #define libDLLEvent1(name) \
 virtual void on##name(const char * str1);
 
+#define libDLLEvent2(name) \
+virtual void on##name(const char * str1, const char * str2);
+
+#define libDLLEvent3(name) \
+virtual void on##name(const char * str1, const char * str2, const char * str3);
+
+#define libDLLEvent4(name) \
+virtual void on##name(const char * str1, const char * str2, const char * str3, const char * str4);
+
 #define libDLLMedia(name) \
 bool in##name(void * data, int size, int width=0, int height=0); \
 virtual bool out##name(void * data, int size, int width=0, int height=0);
@@ -170,7 +179,7 @@ public:
                                      const char * str3, const char * str4);
 
     //libDLLEvent(progress);
-    libDLLEvent1(status)
+    libDLLEvent2(status)
     libDLLEvent1(isinitialised)
     libDLLEvent1(videoframe)
     libDLLEvent1(callerid)
