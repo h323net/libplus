@@ -150,9 +150,10 @@ public:
     };
 
     enum Event {
-        e_status = 1,
+        e_eventNotDefined,
+        e_status,
         e_isinitialised,
-        e_videoframe,
+        e_notused1,
         e_callerid,
         e_incomingcall,
         e_incall,

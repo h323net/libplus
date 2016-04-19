@@ -218,7 +218,7 @@ JNI_PLUSdevice::JNI_PLUSdevice(JNIEnv* env, jobject obj)
     // Load the event map
     JNI_EVENTMAP1(status)
     JNI_EVENTMAP1(isinitialised)
-    JNI_EVENTMAP1(videoframe)
+    //JNI_EVENTMAP1(notused1)
     JNI_EVENTMAP1(callerid)
     JNI_EVENTMAP1(incomingcall)
     JNI_EVENTMAP1(incall)

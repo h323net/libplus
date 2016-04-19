@@ -138,7 +138,7 @@ public:
         e_eventNotDefined,
         e_status,
         e_isinitialised,
-        e_videoframe,
+        e_notused1,
         e_callerid,
         e_incomingcall,
         e_incall,

@@ -48,7 +48,7 @@ void CLR_PLUSdevice::Event(int evtID, const char * p1, const char * p2, const ch
     switch (evtID) {
         libNETEVT2(status)
         libNETEVT1(isinitialised)
-        libNETEVT1(videoframe)
+        //libNETEVT1(notused1)
         libNETEVT1(callerid)
         libNETEVT1(incomingcall)
         libNETEVT1(incall)

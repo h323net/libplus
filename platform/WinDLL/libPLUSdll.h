@@ -153,9 +153,10 @@ public:
 
     // Events
     enum Event {
-        e_status = 1,
+        e_eventNotDefined,
+        e_status,
         e_isinitialised,
-        e_videoframe,
+        e_notused1,
         e_callerid,
         e_incomingcall,
         e_incall,
@@ -181,7 +182,7 @@ public:
     //libDLLEvent(progress);
     libDLLEvent2(status)
     libDLLEvent1(isinitialised)
-    libDLLEvent1(videoframe)
+    //libDLLEvent1(notused1)
     libDLLEvent1(callerid)
     libDLLEvent1(incomingcall)
     libDLLEvent1(incall)

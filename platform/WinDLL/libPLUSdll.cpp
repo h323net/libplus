@@ -61,7 +61,7 @@ public:
         switch (evtID) {
             libDLLEvtOpt2(status)
             libDLLEvtOpt1(isinitialised)
-            libDLLEvtOpt1(videoframe)
+            //libDLLEvtOpt1(notused1)
             libDLLEvtOpt1(callerid)
             libDLLEvtOpt1(incomingcall)
             libDLLEvtOpt1(incall)
@@ -236,10 +236,9 @@ bool libPLUS::HandleEvent(int id, const char * /*str1*/,
     return false;
 }
 
-//libDLLEvtBody(progress);
 libDLLEvtBody2(status)
 libDLLEvtBody1(isinitialised)
-libDLLEvtBody1(videoframe)
+//libDLLEvtBody1(notused1)
 libDLLEvtBody1(callerid)
 libDLLEvtBody1(incomingcall)
 libDLLEvtBody1(incall)

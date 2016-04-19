@@ -249,7 +249,7 @@ public:
 
     // Event macros
     PlusEvent2(status);
-    PlusEvent1(videoframe);
+    //PlusEvent1(notused1);
     PlusEvent1(isinitialised);
     PlusEvent1(callerid);
     PlusEvent1(incomingcall);

@@ -61,7 +61,7 @@ public:
 
     libNETCLR2(status)
     libNETCLR1(isinitialised)
-    libNETCLR1(videoframe)
+    //libNETCLR1(notused1)
     libNETCLR1(callerid)
     libNETCLR1(incomingcall)
     libNETCLR1(incall)
@@ -196,7 +196,7 @@ namespace libplus {
 
     libNETEventDel2(status)
     libNETEventDel1(isinitialised)
-    libNETEventDel1(videoframe)
+    //libNETEventDel1(notused1)
     libNETEventDel1(callerid)
     libNETEventDel1(incomingcall)
     libNETEventDel1(incall)
@@ -302,7 +302,7 @@ namespace libplus {
             // Events
             libNETEvent2(status)
             libNETEvent1(isinitialised)
-            libNETEvent1(videoframe)
+            //libNETEvent1(notused1)
             libNETEvent1(callerid)
             libNETEvent1(incomingcall)
             libNETEvent1(incall)
@@ -327,7 +327,7 @@ namespace libplus {
             {
                 libNETInitial(status)
                 libNETInitial(isinitialised)
-                libNETInitial(videoframe)
+                //libNETInitial(notused1)
                 libNETInitial(callerid)
                 libNETInitial(incomingcall)
                 libNETInitial(incall)
