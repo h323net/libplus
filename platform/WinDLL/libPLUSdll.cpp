@@ -113,6 +113,9 @@ void libPLUS::do##name(const char * str1, const char * str2) { if (m_Impl) m_Imp
 #define libDLLMethBody3(name) \
 void libPLUS::do##name(const char * str1, const char * str2, const char * str3) { if (m_Impl) m_Impl->Call(PLUSdevice::e_##name, str1, str2, str3); }
 
+#define libDLLMethBody4(name) \
+void libPLUS::do##name(const char * str1, const char * str2, const char * str3, const char * str4) { if (m_Impl) m_Impl->Call(PLUSdevice::e_##name, str1, str2, str3, str4); }
+
 #define libDLLEvtBody(name) \
 void libPLUS::on##name() {}
 
@@ -226,6 +229,7 @@ libDLLMethBody1(realTimeTextInput)
 libDLLMethBody0(realTimeTextNewLine)
 libDLLMethBody1(secondCall)
 libDLLMethBody0(stop)
+libDLLMethBody3(videosize)
 libDLLMethBody0(dhParameters)
 // IMPL: Method Names here
 

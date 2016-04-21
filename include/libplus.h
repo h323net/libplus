@@ -127,6 +127,7 @@ public:
         e_secondCall,
         e_stop,
         e_dhParameters,
+        e_videosize,
         e_userDefinedMethod = 1000
         // IMPL: Method Names Here
     };
@@ -138,7 +139,7 @@ public:
         e_eventNotDefined,
         e_status,
         e_isinitialised,
-        e_notused1,
+        e_notused1,  /* Not Currently used*/
         e_callerid,
         e_incomingcall,
         e_incall,
@@ -180,7 +181,8 @@ public:
         int methodID,             // ID from Method enum
         const char * p1 = "",     // parameter 1
         const char * p2 = "",     // parameter 2
-        const char * p3 = ""      // parameter 3
+        const char * p3 = "",     // parameter 3
+        const char * p4 = ""      // parameter 3
         );
 
 

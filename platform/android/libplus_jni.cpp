@@ -132,6 +132,7 @@ JNI_HEADER(UnLoad) {
     libAndroidMethod(realTimeTextNewLine)
     libAndroidMethod1(secondCall)
     libAndroidMethod(stop)
+    libAndroidMethod3(videosize)
     libAndroidMethod(dhParameters)
     // IMPL: Method Names Here
 

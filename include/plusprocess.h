@@ -28,15 +28,15 @@ class Messages
 {
 public:
     struct Msg {
-        Msg(int id = 0, const PString & ver1 = "", const PString & ver2 = "", const PString & ver3 = "")
-            : msgId(id), v1(ver1), v2(ver2), v3(ver3) {}
+        Msg(int id = 0, const PString & ver1 = "", const PString & ver2 = "", const PString & ver3 = "", const PString & ver4 = "")
+            : msgId(id), v1(ver1), v2(ver2), v3(ver3), v4(ver4) {}
         int msgId; 
-        PString v1, v2, v3;
+        PString v1, v2, v3, v4;
     };
 
-    void AddMessage(int id, const PString & v1, const PString & v2, const PString & v3) {
+    void AddMessage(int id, const PString & v1, const PString & v2, const PString & v3, const PString & v4) {
         PWaitAndSignal m(lMute);
-        lBuffer.push(Msg(id, v1, v2, v3));
+        lBuffer.push(Msg(id, v1, v2, v3, v4));
     };
 
     PBoolean GetMessage(Msg & msg) {
@@ -145,6 +145,7 @@ public:
         e_secondcall,
         e_stop,
         e_dhParameters,
+        e_videosize,
         e_userMethod = 1000
         // IMPL: Method Names Here
     };
@@ -174,7 +175,7 @@ public:
     void    SetSetting(Setting set, const PString & value);
     PString GetSetting(Setting set);
 
-    void DoMethod(Method id, const PString & p1, const PString & p2, const PString & p3);
+    void DoMethod(Method id, const PString & p1, const PString & p2, const PString & p3, const PString & p4);
 
     // Events
     void HandleEvent(Event evt, const std::string & p1 = "", const std::string & p2 = "", const std::string & p3 = "", const std::string & p4 = "");
@@ -208,7 +209,7 @@ protected:
     void Uninitialise();
 
     void SetLocalUserName(const PString & username);
-    void InternalDoMethod(Method id, const PString & p1, const PString & p2, const PString & p3);
+    void InternalDoMethod(Method id, const PString & p1, const PString & p2, const PString & p3, const PString & p4);
 
     void ProcessMessages();
     void ProcessMediaSamples();

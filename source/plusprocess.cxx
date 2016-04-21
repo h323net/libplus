@@ -30,7 +30,7 @@
 #define PlusProcessSetSetting(name)  case e_##name: m_endpoint->set_##name(value); break;
 #define PlusProcessSetUserRestart    case e_username: SetLocalUserName(value); break;
 
-#define PlusProcessMethod(name)  case e_##name: m_endpoint->Do##name(p1,p2,p3); break;
+#define PlusProcessMethod(name)  case e_##name: m_endpoint->Do##name(p1,p2,p3,p4); break;
 
 #define PLUSProcessMediaBody(name) \
 bool PlusProcess::in##name(void * data, int size, int width, int height) { return false; } \
@@ -278,15 +278,15 @@ PString PlusProcess::GetSetting(Setting set)
 }
 
 
-void PlusProcess::DoMethod(Method id, const PString & p1, const PString & p2, const PString & p3)
+void PlusProcess::DoMethod(Method id, const PString & p1, const PString & p2, const PString & p3, const PString & p4)
 {
     if (!m_endpoint) return;
 
-    m_messages.AddMessage(id, p1, p2, p3);
+    m_messages.AddMessage(id, p1, p2, p3,p4);
 }
 
 
-void PlusProcess::InternalDoMethod(Method id, const PString & p1, const PString & p2, const PString & p3)
+void PlusProcess::InternalDoMethod(Method id, const PString & p1, const PString & p2, const PString & p3, const PString & p4)
 {
     switch (id) {
         PlusProcessMethod(placecall)
@@ -301,6 +301,7 @@ void PlusProcess::InternalDoMethod(Method id, const PString & p1, const PString 
         PlusProcessMethod(secondcall)
         PlusProcessMethod(stop) 
         PlusProcessMethod(dhParameters)
+        PlusProcessMethod(videosize)
         PlusProcessMethod(userMethod)
         // IMPL: Method Names Here
         default: break;
@@ -323,7 +324,7 @@ PlusProcess::Sample::Sample()
 void PlusProcess::ProcessMessages()
 {
     if (m_messages.GetMessage(m_msg))
-        InternalDoMethod((Method)m_msg.msgId, m_msg.v1, m_msg.v2, m_msg.v3);
+        InternalDoMethod((Method)m_msg.msgId, m_msg.v1, m_msg.v2, m_msg.v3, m_msg.v4);
 }
 
 

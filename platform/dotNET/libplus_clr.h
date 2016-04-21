@@ -97,9 +97,9 @@ void UnManaged_SetValue(CLR_PLUSdevice * device, int settingID, const char* str)
     device->Set_Value(settingID, str);
 }
 
-void UnManaged_Call(CLR_PLUSdevice * device, int settingID, const char* str1, const char* str2, const char* str3)
+void UnManaged_Call(CLR_PLUSdevice * device, int settingID, const char* str1, const char* str2, const char* str3, const char* str4)
 {
-    device->Call(settingID, str1, str2, str3);
+    device->Call(settingID, str1, str2, str3, str4);
 }
 
 #pragma managed
@@ -111,11 +111,11 @@ void Managed_SetValue(CLR_PLUSdevice * device, int settingID, String ^ value)
     delete context;
 }
 
-void Managed_Call(CLR_PLUSdevice * device, int settingID, String ^ p1 = "", String ^ p2 = "", String ^ p3 = "")
+void Managed_Call(CLR_PLUSdevice * device, int settingID, String ^ p1 = "", String ^ p2 = "", String ^ p3 = "", String ^ p4 = "")
 {
     marshal_context^ context = gcnew marshal_context();
     UnManaged_Call(device, settingID, context->marshal_as<const char*>(p1), 
-                    context->marshal_as<const char*>(p2), context->marshal_as<const char*>(p3));
+                    context->marshal_as<const char*>(p2), context->marshal_as<const char*>(p3), context->marshal_as<const char*>(p4));
     delete context;
 } 
 
@@ -136,6 +136,9 @@ void name##(String^ str1, String^ str2) { Managed_Call(m_Impl, PLUSdevice::e_##n
 
 #define libNETMethod3(name) \
 void name##(String^ str1, String^ str2, String^ str3) { Managed_Call(m_Impl, PLUSdevice::e_##name, str1, str2, str3); }
+
+#define libNETMethod4(name) \
+void name##(String^ str1, String^ str2, String^ str3, String^ str4) { Managed_Call(m_Impl, PLUSdevice::e_##name, str1, str2, str3, str4); }
 
 #define libNETEventDel1(name) \
 public delegate void name##_del(String^ p1);
@@ -225,6 +228,7 @@ namespace libplus {
 
             void Unload();
 
+            enum class MediaStream { audioIn, audioOut, videoIn, videoOut, extVideoIn, extVideoOut, localVideoOut };
 
             // Settings
             libNETSetting(version)
@@ -297,6 +301,7 @@ namespace libplus {
             libNETMethod1(secondCall)
             libNETMethod0(stop)
             libNETMethod0(dhParameters)
+            libNETMethod3(videosize)
             // IMPL: Method Names here
 
             // Events

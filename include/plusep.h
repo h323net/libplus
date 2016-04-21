@@ -59,8 +59,8 @@ public:
 
         Queue(unsigned width, unsigned height, const PString & format);
 
-        unsigned m_defWidth;
-        unsigned m_defHeight;
+        unsigned m_width;
+        unsigned m_height;
         PString  m_format;
         PMutex   m_mutex;
         bool     m_shutdown;
@@ -74,7 +74,10 @@ public:
     virtual PBoolean SetColourFormat(unsigned id, const PString & colourFormat);
     virtual void     GetColourFormat(unsigned id, PString & colourFormat);
 
+    virtual void SetVideoFormat(H323Channel::Directions dir, const PString & colourFormat);
+
     virtual PBoolean GetFrameSize(unsigned id, unsigned & width, unsigned & height);
+    virtual PBoolean SetFrameSize(unsigned id, unsigned width, unsigned height);
 
     virtual bool Write(unsigned id, void * data, unsigned size, unsigned width, unsigned height);
     virtual bool Read(unsigned id, bool toBlock, void * data, unsigned & size, unsigned & width, unsigned & height);
@@ -112,7 +115,7 @@ private:
 
 #define PlusMethod(name) \
     public: \
-    void Do##name(const PString & p1, const PString & p2, const PString & p3) 
+    void Do##name(const PString & p1, const PString & p2, const PString & p3, const PString & p4) 
 
 #define PlusEvent(name) \
     void fire_##name() \
@@ -244,6 +247,7 @@ public:
         GenerateParameters();
 #endif
     }
+    PlusMethod(videosize) { m_mediaManager.SetFrameSize((unsigned)p1.AsInteger(), (unsigned)p2.AsInteger(), (unsigned)p3.AsInteger()); }
     PlusMethod(userMethod) {}   // Not used but there for GCC warning
     // IMPL: Method Names here
 

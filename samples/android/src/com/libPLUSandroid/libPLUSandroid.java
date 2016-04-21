@@ -33,6 +33,12 @@ public class libPLUSandroid extends Activity
 	 }
 
 	/*
+	 * Enum
+	 * Video Stream enumerator
+	 */
+	public enum MediaStream { audioIn, audioOut, videoIn, videoOut, extVideoIn, extVideoOut, localVideoOut };
+
+	/*
 	 * Events
 	 * Override these functions to receive events
 	 */
@@ -51,7 +57,7 @@ public class libPLUSandroid extends Activity
     public void onpresenceSupport(String val) {}
     public void onduplicate(String notused) {}
     public void onforwardCall(String val) {}
-    public void ondhGenerate(String val) {};
+    public void ondhGenerate(String val) {}
     // IMPL: Event Names here
 
 	/*
@@ -71,6 +77,7 @@ public class libPLUSandroid extends Activity
     public native void dorealTimeTextNewLine();
     public native void dosecondCall(String p1);
     public native void dostop();
+    public native void dovideosize(String p1, String p2, String p3);
     public native void dodhParameters();
     // IMPL: Method Names Here
 

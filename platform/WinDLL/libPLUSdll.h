@@ -45,6 +45,9 @@ void do##name(const char * str1, const char * str2);
 #define libDLLMethod3(name) \
 void do##name(const char * str1, const char * str2, const char * str3);
 
+#define libDLLMethod4(name) \
+void do##name(const char * str1, const char * str2, const char * str3, const char * str4);
+
 #define libDLLEvent(name) \
 virtual void on##name();
 
@@ -76,6 +79,16 @@ public:
 
     void Load();
     void Unload();
+
+    enum MediaStream {
+        audioIn,
+        audioOut,
+        videoIn,
+        videoOut,
+        extVideoIn,
+        extVideoOut,
+        localVideoOut
+    };
 
     // Settings
     libDLLSetting(version)
@@ -148,6 +161,7 @@ public:
     libDLLMethod0(realTimeTextNewLine)
     libDLLMethod1(secondCall)
     libDLLMethod0(stop)
+    libDLLMethod3(videosize)
     libDLLMethod0(dhParameters)
     // IMPL: Method Names here
 

@@ -83,14 +83,14 @@ PlusMediaManager::Sample::Sample(void * data, unsigned size, unsigned width, uns
 
 
 PlusMediaManager::Queue::Queue()
-: m_defWidth(0), m_defHeight(0), m_format(""), m_shutdown(false)
+: m_width(0), m_height(0), m_format(""), m_shutdown(false)
 {
 
 }
 
 
 PlusMediaManager::Queue::Queue(unsigned width, unsigned height, const PString & format)
-: m_defWidth(width), m_defHeight(height), m_format(format), m_shutdown(false)
+: m_width(width), m_height(height), m_format(format), m_shutdown(false)
 {
 
 }
@@ -98,6 +98,9 @@ PlusMediaManager::Queue::Queue(unsigned width, unsigned height, const PString & 
 
 PStringArray PlusMediaManager::SupportedFormats(MediaStream dir)
 {
+    if (dir >= e_NoOfMediaStream)
+        return "";
+
     switch (dir) {
         case e_audioIn:
         case e_audioOut:
@@ -115,8 +118,12 @@ PStringArray PlusMediaManager::SupportedFormats(MediaStream dir)
     }
 }
 
+
 void PlusMediaManager::GetColourFormat(unsigned id, PString & colourFormat)
 {
+    if (id >= e_NoOfMediaStream)
+        return;
+
     colourFormat = m_queueMedia[id].m_format;
 }
 
@@ -124,19 +131,54 @@ void PlusMediaManager::GetColourFormat(unsigned id, PString & colourFormat)
 
 PBoolean PlusMediaManager::SetColourFormat(unsigned id, const PString & colourFormat)
 {
-    m_queueMedia[id].m_format = colourFormat;
+    if (id >= e_NoOfMediaStream)
+        return false;
+
+    Queue & q = m_queueMedia[id];
+        q.m_mutex.Wait();
+            q.m_format = colourFormat;
+        q.m_mutex.Signal();
+
     return true;
+}
+
+
+void PlusMediaManager::SetVideoFormat(H323Channel::Directions dir, const PString & colourFormat)
+{
+    if (dir == H323Channel::IsTransmitter) {
+        SetColourFormat(e_videoOut, colourFormat);
+        SetColourFormat(e_extVideoOut, colourFormat);
+        SetColourFormat(e_localVideoOut, colourFormat);
+    } else {
+        SetColourFormat(e_videoIn, colourFormat);
+        SetColourFormat(e_extVideoIn, colourFormat);
+    }
 }
 
 
 PBoolean PlusMediaManager::GetFrameSize(unsigned id, unsigned & width, unsigned & height)
 {
-    Queue & q = m_queueMedia[id];
-    width = q.m_defWidth;
-    height = q.m_defHeight;
+    if (id >= e_NoOfMediaStream)
+        return false;
 
+    Queue & q = m_queueMedia[id];
+    width = q.m_width;
+    height = q.m_height;
     return true;
 }
+
+
+PBoolean PlusMediaManager::SetFrameSize(unsigned id, unsigned width, unsigned height)
+{
+    if (id >= e_NoOfMediaStream)
+        return false;
+
+    Queue & q = m_queueMedia[id];
+    q.m_width = width;
+    q.m_height = height;
+    return true;
+}
+
 
 bool PlusMediaManager::ProcessMediaSamples(unsigned & id, void * data, unsigned & size, unsigned & width, unsigned & height)
 {
@@ -152,6 +194,9 @@ bool PlusMediaManager::ProcessMediaSamples(unsigned & id, void * data, unsigned 
 
 bool PlusMediaManager::Write(unsigned id, void * data, unsigned size, unsigned width, unsigned height)
 {
+    if (id >= e_NoOfMediaStream)
+        return false;
+
     Queue & q = m_queueMedia[id];
 
     q.m_mutex.Wait();
@@ -164,6 +209,9 @@ bool PlusMediaManager::Write(unsigned id, void * data, unsigned size, unsigned w
 
 bool PlusMediaManager::Read(unsigned id, bool toBlock, void * data, unsigned & size, unsigned & width, unsigned & height)
 {
+    if (id >= e_NoOfMediaStream)
+        return false;
+
     Queue & q = m_queueMedia[id];
 
     if (!toBlock) {
@@ -505,12 +553,7 @@ PBoolean PlusEndPoint::STUNNatType(int type)
     m_stunType = type;
     return true;
 }
-/*
-void PlusEndPoint::SendFrame(const std::string & image)
-{
-    fire_videoframe(image);
-}
-*/
+
 void PlusEndPoint::OnMediaEncryption(unsigned session, H323Channel::Directions dir, const PString & cipher) 
 {
     if (session == 1 && dir == H323Channel::IsTransmitter)
@@ -582,6 +625,10 @@ PBoolean PlusEndPoint::OpenVideoChannel(H323Connection & connection, PBoolean is
             videoCaps.framesizes.push_back(cap);
             codec.SetSupportedFormats(videoCaps.framesizes);
         }
+    }
+    else {
+        if (PIsDescendant(device, PVideoOutputDevice_External))
+            ((PVideoOutputDevice_External*)device)->AttachManager(PlusMediaManager::e_videoOut, &m_mediaManager);
     }
 
     if (!device->SetFrameSize(codec.GetWidth(), codec.GetHeight()) ||
@@ -1028,6 +1075,13 @@ void PlusEndPoint::HandleSettingChange(PlusProcess::Setting setting, const PStri
                m_dataStore.SetString(defDBSectVar, name, value);
 #endif
             break;
+    }
+
+    // Set Video Formats
+    switch (setting) {
+        case PlusProcess::e_videoinformat:  m_mediaManager.SetVideoFormat(H323Channel::IsReceiver, value);  return;
+        case PlusProcess::e_videooutformat: m_mediaManager.SetVideoFormat(H323Channel::IsTransmitter, value);  return;
+        default: break;
     }
 
     if (m_currentCallToken.IsEmpty())  // We are not currently in a call the exit.

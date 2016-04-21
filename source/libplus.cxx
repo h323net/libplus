@@ -68,12 +68,12 @@ const char * PLUSdevice::Get_Value(int settingID)
    return (const char *)l_vProcess->GetSetting((PlusProcess::Setting)settingID);
 }
 
-void PLUSdevice::Call(int methodID, const char * p1, const char * p2, const char * p3)
+void PLUSdevice::Call(int methodID, const char * p1, const char * p2, const char * p3, const char * p4)
 {
     if (!l_vProcess)
         return;
 
-    l_vProcess->DoMethod((PlusProcess::Method)methodID,p1,p2,p3);
+    l_vProcess->DoMethod((PlusProcess::Method)methodID,p1,p2,p3,p4);
 }
 
 void PLUSdevice::Event(int evtID, const char * p1, const  char * p2, const char * p3, const char * p4)
