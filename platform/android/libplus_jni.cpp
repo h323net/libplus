@@ -239,11 +239,13 @@ libAndroidSetting(encryptMediaHigh)
 
 #define JNI_EVENTMAP1(name) \
     mid = env->GetMethodID(cls, JNI_JOIN(on,name), "(Ljava/lang/String;)V"); \
-    m_eventMap.insert(std::make_pair(PLUSdevice::e_##name,mid));
+    if (mid != NULL) \
+        m_eventMap.insert(std::make_pair(PLUSdevice::e_##name,mid));
 
 #define JNI_EVENTMEDIA(name) \
     mid = env->GetMethodID(cls, JNI_JOIN(out,name), "([BI)V"); \
-    m_mediaMap.insert(std::make_pair(PLUSdevice::e_##name##Out,mid));
+    if (mid != NULL) \
+        m_mediaMap.insert(std::make_pair(PLUSdevice::e_##name##Out,mid));
 
 
 #define PLUSMediaBody(name) \
