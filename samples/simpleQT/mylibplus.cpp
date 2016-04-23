@@ -52,6 +52,13 @@ bool mylibPLUS::HandleEvent(int id, const char * str1, const char * str2,
     return true;
 }
 
+bool mylibPLUS::outvideo(void * /*data*/, int size, int width, int height)
+{
+   qDebug() << "Video Rec'd " << size << " w:" << width << " h:" << height;
+
+   return true;
+}
+
 // mylibDLLEvtBody1(status)
 // IMPL: Event Names here
 

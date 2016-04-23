@@ -74,11 +74,17 @@ public slots:
     void update();
 
 private slots:
+
     void on_btnStart_clicked(bool checked);
 
     void on_btnCall_clicked(bool checked);
 
+    void on_lbVideoPlay_currentIndexChanged(const QString &arg1);
+
+    void on_lbFmt_currentIndexChanged(const QString &arg1);
+
 protected:
+    void LoadDisplay(bool toEnable);
     void EnableDisplay(bool toEnable);
     void SetInCall(bool inCall);
 
@@ -94,6 +100,7 @@ private:
     std::queue<PlusImage>     m_frames;      ///< libPlus Video Images
     QMutex                    m_mutFrames;
 
+    bool                      m_loading;
 };
 
 #endif // MAINWINDOW_H

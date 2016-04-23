@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>374</width>
-    <height>417</height>
+    <height>474</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -95,6 +95,52 @@
       <y>330</y>
       <width>221</width>
       <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="lbVideoPlay">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>360</y>
+      <width>151</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblPlayDev">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>360</y>
+      <width>51</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Video Dev</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblFormat">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>360</y>
+      <width>21</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fmt</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="lbFmt">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>360</y>
+      <width>101</width>
+      <height>21</height>
      </rect>
     </property>
    </widget>

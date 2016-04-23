@@ -40,6 +40,9 @@ class mylibPLUS  : public libPLUS
     // libDLLEvent1(status)
     // IMPL: Event Names here
 
+    // Media Handling
+    virtual bool outvideo(void * data, int size, int width=0, int height=0);
+
   private:
     MainWindow * m_window;
 

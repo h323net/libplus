@@ -28,7 +28,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow), m_loading(false)
 {
     ui->setupUi(this);
 
@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // debugging
     m_libPLUS->settracing("6");
+    m_libPLUS->dovideosize("1","352","288");
 
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -143,18 +144,56 @@ bool MainWindow::ProcessFrames()
 ////////////////////////////////////////////////////////
 // UI functions
 
-void MainWindow::EnableDisplay(bool toEnable)
+void MainWindow::LoadDisplay(bool toEnable)
 {
-    if (toEnable) {
-        ui->btnStart->setText("Stop");
-
-    } else {
-        ui->btnStart->setText("Start");
-        ui->lblStatus->setText("");
-    }
+    m_loading = true;
 
     ui->btnCall->setEnabled(toEnable);
     ui->lblNumber->setEnabled(toEnable);
+    ui->lbFmt->setEnabled(toEnable);
+    ui->lbVideoPlay->setEnabled(toEnable);
+
+    if (toEnable) {
+        // devices
+        QString dev1(m_libPLUS->getdrvvideoplay());
+        QStringList devlist1 = dev1.split(';');
+
+        ui->lbVideoPlay->clear();
+        for (int i=0; i < devlist1.size(); ++i)
+            ui->lbVideoPlay->addItem(devlist1[i]);
+
+        ui->lbVideoPlay->setCurrentText(QString(m_libPLUS->getcurdrvaudioplay()));
+
+
+        // formats
+        QString dev2(m_libPLUS->getvideoformats());
+        QStringList devlist2 = dev2.split(';');
+
+        ui->lbFmt->clear();
+        for (int i=0; i < devlist2.size(); ++i)
+            ui->lbFmt->addItem(devlist2[i]);
+
+        ui->lbFmt->setCurrentText(QString(m_libPLUS->getvideooutformat()));
+    } else {
+
+        ui->lblStatus->clear();
+        ui->lblNumber->clear();
+        ui->lbFmt->clear();
+        ui->lbVideoPlay->clear();
+
+    }
+
+    m_loading = false;
+}
+
+void MainWindow::EnableDisplay(bool toEnable)
+{
+    if (toEnable)
+        ui->btnStart->setText("Stop");
+    else
+        ui->btnStart->setText("Start");
+
+    LoadDisplay(toEnable);
 }
 
 void MainWindow::SetInCall(bool inCall)
@@ -192,5 +231,18 @@ void MainWindow::on_btnCall_clicked(bool checked)
         m_libPLUS->doplaceCall(number.toStdString().c_str());
     } else {
         m_libPLUS->dohangupCall();
+    }
+}
+
+void MainWindow::on_lbVideoPlay_currentIndexChanged(const QString &arg1)
+{
+    if (!m_loading)
+        m_libPLUS->setcurdrvvideoplay(arg1.toStdString().c_str());
+}
+
+void MainWindow::on_lbFmt_currentIndexChanged(const QString &arg1)
+{
+    if (!m_loading) {
+        m_libPLUS->setvideooutformat(arg1.toStdString().c_str());
     }
 }
