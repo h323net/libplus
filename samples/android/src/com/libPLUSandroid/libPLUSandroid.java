@@ -63,9 +63,9 @@ public class libPLUSandroid extends Activity
 	/*
 	 * Media Out Events
 	 */
-    public void onaudio(byte[] val, int size) {}
-    public void onvideo(byte[] val, int size) {}
-    public void oncontent(byte[] val, int size) {}
+    public void outaudio(byte[] val, int size) {}
+    public void outvideo(byte[] val, int size) {}
+    public void outcontent(byte[] val, int size) {}
 
 	/*
 	 * Methods
