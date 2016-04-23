@@ -77,11 +77,11 @@ int main()
     cout << "drvaudiorec= "     << x.getdrvaudiorec() << endl;
     cout << "curdrvvideoplay= " << x.getcurdrvvideoplay() << endl;
     cout << "curdrvvideorec= "  << x.getcurdrvvideorec() << endl;
-    cout << "curdrvaudioplay= " << x.getdevvideoplay() << endl;
-    cout << "curdrvaudiorec= "  << x.getdevvideorec() << endl;
-    cout << "devvideoplay= "    << x.getaudioplay() << endl;
-    cout << "devvideorec= "     << x.getdevaudiorec() << endl;
-    cout << "devaudioplay= "    << x.getaudioplay() << endl;
+    cout << "curdrvaudioplay= " << x.getcurdrvaudioplay() << endl;
+    cout << "curdrvaudiorec= "  << x.getcurdrvaudiorec() << endl;
+    cout << "devvideoplay= "    << x.getdevvideoplay() << endl;
+    cout << "devvideorec= "     << x.getdevvideorec() << endl;
+    cout << "devaudioplay= "    << x.getdevaudioplay() << endl;
     cout << "devaudiorec= "     << x.getdevaudiorec() << endl;
     cout << "audioplay= "       << x.getaudioplay() << endl;
     cout << "audiorec= "        << x.getaudiorec() << endl;

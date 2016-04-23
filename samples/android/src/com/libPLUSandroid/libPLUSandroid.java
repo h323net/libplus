@@ -277,9 +277,9 @@ public class libPLUSandroid extends Activity
 				"drvaudiorec= "  + getdrvaudiorec() + "%n" +
 				"curdrvvideoplay= "  + getcurdrvvideoplay() + "%n" +
 				"curdrvvideorec= "  + getcurdrvvideorec() + "%n" +
-				"curdrvaudioplay= "  + getdevvideoplay() + "%n" +
-				"curdrvaudiorec= "  + getdevvideorec() + "%n" +
-				"devvideoplay= "  + getaudioplay() + "%n" +
+				"curdrvaudioplay= "  + getdevaudioplay() + "%n" +
+				"curdrvaudiorec= "  + getdevaudiorec() + "%n" +
+				"devvideoplay= "  + getdevvideoplay() + "%n" +
 				"devvideorec= "  + getdevaudiorec() + "%n" +
 				"devaudioplay= "  + getaudioplay() + "%n" +
 				"devaudiorec= "  + getdevaudiorec() + "%n" +
