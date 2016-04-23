@@ -509,7 +509,9 @@ void PlusEndPoint::OnCallClearing(H323Connection * connection,
     PlusSetValue(h284call, 0);
     fire_encryption("0");
     fire_incall("0");
-    FireStatus(connection->GetCallEndReason() + 6);
+
+    if (reason < H323Connection::NumCallEndReasons)
+        FireStatus(reason + 6);
 }
 
 PBoolean PlusEndPoint::OnIncomingCall(H323Connection & connection,
