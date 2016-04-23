@@ -41,7 +41,7 @@ class mylibPLUS  : public libPLUS
     // IMPL: Event Names here
 
     // Media Handling
-    virtual bool outvideo(void * data, int size, int width=0, int height=0);
+    virtual bool outvideo(const void * data, int size, int width=0, int height=0);
 
   private:
     MainWindow * m_window;

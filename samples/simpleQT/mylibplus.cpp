@@ -52,7 +52,7 @@ bool mylibPLUS::HandleEvent(int id, const char * str1, const char * str2,
     return true;
 }
 
-bool mylibPLUS::outvideo(void * /*data*/, int size, int width, int height)
+bool mylibPLUS::outvideo(const void * /*data*/, int size, int width, int height)
 {
    qDebug() << "Video Rec'd " << size << " w:" << width << " h:" << height;
 
