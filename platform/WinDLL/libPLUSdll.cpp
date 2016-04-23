@@ -40,7 +40,7 @@ case PLUSdevice::e_##name: m_dev.on##name(p1,p2,p3); break;
 case PLUSdevice::e_##name: m_dev.on##name(p1,p2,p3,p4); break;
 
 #define libDLLMediaDev(name) \
-virtual bool out##name(void * data, int size, int width=0, int height=0) { return m_dev.out##name(data, size, width, height); }
+virtual bool out##name(const void * data, int size, int width=0, int height=0) {  return m_dev.out##name(data, size, width, height);  }
 
 
 class DLL_PLUSdevice : public PLUSdevice
@@ -133,7 +133,7 @@ void libPLUS::on##name(const char * str1, const char * str2, const char * str3, 
 
 #define libDLLMediaBody(name) \
 bool libPLUS::in##name(void * data, int size, int width, int height) {  return m_Impl->in##name(data, size, width, height); } \
-bool libPLUS::out##name(void * data, int size, int width, int height) {  return false;  }
+bool libPLUS::out##name(const void * data, int size, int width, int height) {  return false;  }
 
 
 libPLUS::libPLUS() : m_Impl(NULL) {  }

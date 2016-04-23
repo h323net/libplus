@@ -65,7 +65,7 @@ virtual void on##name(const char * str1, const char * str2, const char * str3, c
 
 #define libDLLMedia(name) \
 bool in##name(void * data, int size, int width=0, int height=0); \
-virtual bool out##name(void * data, int size, int width=0, int height=0);
+virtual bool out##name(const void * data, int size, int width=0, int height=0);
 
 
 // This class is exported from the libPLUS.dll
