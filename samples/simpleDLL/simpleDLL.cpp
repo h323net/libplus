@@ -21,9 +21,8 @@
 #include "stdafx.h"
 
 #include <iostream>
+#include <string>
 using namespace std;
-
-//#include "Windows.h"
 
 
 class MylibPLUS : public libPLUS
@@ -32,48 +31,95 @@ class MylibPLUS : public libPLUS
 public:
     MylibPLUS() {}
 
+    // To collect all events override this function and return true.
+    virtual bool HandleEvent(int id, const char * str1, const char * str2, const char * str3, const char * str4)
+    {
+        cout << "Evt " << id << " " << str1 << " " << str2 << " " << str3 << " " << str4 << endl;
+        return true;  // Must return true
+    }
+
+    virtual bool outvideo(const void * data, int size, int width = 0, int height = 0)
+    {
+        //cout << "frame " << size << " " << width << " " << height << endl;
+        return true; // Must return true
+    }
+
 };
 
 int main()
 {
-    cout << "libPLUS WinDLL Test:" << "\n";
+    cout << "libPLUS WinDLL Test:" << endl;
 
     cout << "Loading library.....";
     MylibPLUS x;
     x.Load();
     cout << "done.\n\n";
 
-    cout << "SETTINGS:"         << "\n";
-    cout << "version= "         << x.getversion() << "\n";
-    cout << "tracing= "         << x.gettracing() << "\n";
-    cout << "username= "        << x.getusername() << "\n";
-    cout << "password= "        << x.getpassword() << "\n";
-    cout << "server= "          << x.getserver() << "\n";
-    cout << "quality= "         << x.getquality() << "\n";
-    cout << "accessability= "   << x.getaccessability() << "\n";
-    cout << "content= "         << x.getcontent() << "\n";
-    cout << "autoanswer= "      << x.getautoanswer() << "\n";
-    cout << "drvvideoplay= "    << x.getdrvvideoplay() << "\n";
-    cout << "drvvideorec= "     << x.getdrvvideorec() << "\n";
-    cout << "drvaudioplay= "    << x.getdrvaudioplay() << "\n";
-    cout << "drvaudiorec= "     << x.getdrvaudiorec() << "\n";
-    cout << "curdrvvideoplay= " << x.getcurdrvvideoplay() << "\n";
-    cout << "curdrvvideorec= "  << x.getcurdrvvideorec() << "\n";
-    cout << "curdrvaudioplay= " << x.getdevvideoplay() << "\n";
-    cout << "curdrvaudiorec= "  << x.getdevvideorec() << "\n";
-    cout << "devvideoplay= "    << x.getaudioplay() << "\n";
-    cout << "devvideorec= "     << x.getdevaudiorec() << "\n";
-    cout << "devaudioplay= "    << x.getaudioplay() << "\n";
-    cout << "devaudiorec= "     << x.getdevaudiorec() << "\n";
-    cout << "audioplay= "       << x.getaudioplay() << "\n";
-    cout << "audiorec= "        << x.getaudiorec() << "\n";
-    cout << "videoplay= "       << x.getvideoplay() << "\n";
-    cout << "videorec= "        << x.getvideorec() << "\n";
-    cout << "videoformats= "    << x.getvideoformats() << "\n";
-    cout << "videoinformat= "   << x.getvideoinformat() << "\n";
-    cout << "videooutformat= "  << x.getvideooutformat() << "\n";
-    cout << "secondvideo= "     << x.getsecondvideo() << "\n";
+    // implementers custom settings here
+    x.settracing("6");
+    x.setcurdrvvideoplay("External");
+    x.setvideooutformat("BGR32");
+    x.dovideosize(std::to_string(libPLUS::videoOut).c_str(), "352", "288");
+
+    cout << "SETTINGS:"         << endl;
+    cout << "version= "         << x.getversion() << endl;
+    cout << "tracing= "         << x.gettracing() << endl;
+    cout << "username= "        << x.getusername() << endl;
+    cout << "password= "        << x.getpassword() << endl;
+    cout << "server= "          << x.getserver() << endl;
+    cout << "quality= "         << x.getquality() << endl;
+    cout << "accessability= "   << x.getaccessability() << endl;
+    cout << "content= "         << x.getcontent() << endl;
+    cout << "autoanswer= "      << x.getautoanswer() << endl;
+    cout << "drvvideoplay= "    << x.getdrvvideoplay() << endl;
+    cout << "drvvideorec= "     << x.getdrvvideorec() << endl;
+    cout << "drvaudioplay= "    << x.getdrvaudioplay() << endl;
+    cout << "drvaudiorec= "     << x.getdrvaudiorec() << endl;
+    cout << "curdrvvideoplay= " << x.getcurdrvvideoplay() << endl;
+    cout << "curdrvvideorec= "  << x.getcurdrvvideorec() << endl;
+    cout << "curdrvaudioplay= " << x.getdevvideoplay() << endl;
+    cout << "curdrvaudiorec= "  << x.getdevvideorec() << endl;
+    cout << "devvideoplay= "    << x.getaudioplay() << endl;
+    cout << "devvideorec= "     << x.getdevaudiorec() << endl;
+    cout << "devaudioplay= "    << x.getaudioplay() << endl;
+    cout << "devaudiorec= "     << x.getdevaudiorec() << endl;
+    cout << "audioplay= "       << x.getaudioplay() << endl;
+    cout << "audiorec= "        << x.getaudiorec() << endl;
+    cout << "videoplay= "       << x.getvideoplay() << endl;
+    cout << "videorec= "        << x.getvideorec() << endl;
+    cout << "videoformats= "    << x.getvideoformats() << endl;
+    cout << "videoinformat= "   << x.getvideoinformat() << endl;
+    cout << "videooutformat= "  << x.getvideooutformat() << endl;
+    cout << "secondvideo= "     << x.getsecondvideo() << endl;
     // IMPL: Setting Names Here
+
+    // Start the endpoint
+    x.dostart();
+    cout << endl << "Press X to exit." << endl;
+
+    // Simplest possible user interface
+    std::string input;
+    for (;;) {
+        cout << "H323> " << flush;
+        getline(cin, input);
+
+        string instruct = input.substr(0, 1);
+        if (!instruct.compare("c") && (input.size() > 3)) {
+            string number = input.substr(2, input.size() - 2);
+            x.doplaceCall(number.c_str());
+        }
+
+        if (!instruct.compare("h"))
+            x.dohangupCall();
+
+
+        if (!instruct.compare("x"))
+            break;
+  
+    }
+
+    x.dostop();
+    x.Unload();
 
     return 0;
 }

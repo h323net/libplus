@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <tchar.h>
 
-#include "libPlusdll.h"
+#include "libPLUSdll.h"
 
 
 
