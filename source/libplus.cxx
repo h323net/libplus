@@ -33,8 +33,8 @@ PlusProcess * l_vProcess = NULL;
 // Main Wrapper Class
 
 #define PlusDevMediaBody(name) \
-bool PLUSdevice::in##name(void * data, int size, int width, int height) { return (l_vProcess && l_vProcess->in##name(data, size, width, height));  } \
-bool PLUSdevice::out##name(void * data, int size, int width, int height) { return false; }
+bool PLUSdevice::in##name(void * data, int size, int width, int height) { return ( l_vProcess && l_vProcess->in##name(data, size, width, height));  } \
+bool PLUSdevice::out##name(const void * data, int size, int width, int height) { return false; }
 
 PLUSdevice::PLUSdevice()
 {
@@ -81,9 +81,9 @@ void PLUSdevice::Event(int evtID, const char * p1, const  char * p2, const char 
     
 }
 
-PlusDevMediaBody(Audio)
+PlusDevMediaBody(audio)
 
-PlusDevMediaBody(Video)
+PlusDevMediaBody(video)
 
-PlusDevMediaBody(Content)
+PlusDevMediaBody(content)
 

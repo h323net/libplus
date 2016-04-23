@@ -213,9 +213,9 @@ public:
     // IMPL: Event Names here
 
     // Media
-    libDLLMedia(Audio)
-    libDLLMedia(Video)
-    libDLLMedia(Content)
+    libDLLMedia(audio)
+    libDLLMedia(video)
+    libDLLMedia(content)
 
 
 private:

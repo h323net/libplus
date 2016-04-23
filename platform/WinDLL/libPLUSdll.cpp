@@ -81,9 +81,9 @@ public:
     }
 
     // Media
-    libDLLMediaDev(Audio)
-    libDLLMediaDev(Video)
-    libDLLMediaDev(Content)
+    libDLLMediaDev(audio)
+    libDLLMediaDev(video)
+    libDLLMediaDev(content)
 
 
 private:
@@ -260,7 +260,7 @@ libDLLEvtBody1(dhGenerate);
 
 
 // Media
-libDLLMediaBody(Audio)
-libDLLMediaBody(Video)
-libDLLMediaBody(Content)
+libDLLMediaBody(audio)
+libDLLMediaBody(video)
+libDLLMediaBody(content)
 

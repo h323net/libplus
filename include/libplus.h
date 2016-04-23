@@ -21,7 +21,7 @@
 
 #define PlusDevMedia(name) \
 bool in##name(void * data, int size, int width=0, int height=0); \
-virtual bool out##name(void * data, int size, int width=0, int height=0);
+virtual bool out##name(const void * data, int size, int width=0, int height=0);
 
 
 /* PLUSdevice
@@ -200,9 +200,20 @@ public:
 
     /* Media Handling
      */
-    PlusDevMedia(Audio)
-    PlusDevMedia(Video)
-    PlusDevMedia(Content)
+    enum MediaStream {
+        e_audioIn,
+        e_audioOut,
+        e_videoIn,
+        e_videoOut,
+        e_contentIn,
+        e_contentOut,
+        e_localVideoOut,
+        e_NoOfMediaStream
+    };
+
+    PlusDevMedia(audio)
+    PlusDevMedia(video)
+    PlusDevMedia(content)
 
     /* IsLoading
 	Check to see if the underlying library is loading

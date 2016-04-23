@@ -19,11 +19,19 @@
 
 #pragma once
 
+#define PLUSMedia(name) \
+virtual bool out##name(const void * data, int size, int width=0, int height=0);
+
 class JNI_PLUSdevice : public PLUSdevice
 {
     public:
         JNI_PLUSdevice(JNIEnv* env, jobject obj);
         virtual ~JNI_PLUSdevice();
+
+        // media callback
+        PLUSMedia(audio)
+        PLUSMedia(video)
+        PLUSMedia(content)
 
     protected:
 
@@ -40,6 +48,7 @@ class JNI_PLUSdevice : public PLUSdevice
         JNIEnv *                 m_env;
         jobject                  m_obj;
         std::map<int, jmethodID> m_eventMap;
+        std::map<int, jmethodID> m_mediaMap;
 
 };
 

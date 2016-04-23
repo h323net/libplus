@@ -36,7 +36,7 @@ public class libPLUSandroid extends Activity
 	 * Enum
 	 * Video Stream enumerator
 	 */
-	public enum MediaStream { audioIn, audioOut, videoIn, videoOut, extVideoIn, extVideoOut, localVideoOut };
+	public enum MediaStream { audioIn, audioOut, videoIn, videoOut, contentIn, contentOut, localVideoOut };
 
 	/*
 	 * Events
@@ -61,6 +61,13 @@ public class libPLUSandroid extends Activity
     // IMPL: Event Names here
 
 	/*
+	 * Media Out Events
+	 */
+    public void onaudio(byte[] val, int size) {}
+    public void onvideo(byte[] val, int size) {}
+    public void oncontent(byte[] val, int size) {}
+
+	/*
 	 * Methods
 	 */
     public native void Load();
@@ -80,6 +87,13 @@ public class libPLUSandroid extends Activity
     public native void dovideosize(String p1, String p2, String p3);
     public native void dodhParameters();
     // IMPL: Method Names Here
+
+	/*
+	 * Media In functions
+	 */
+    public native void doaudio(byte[] val, int size, int width, int height);
+    public native void dovideo(byte[] val, int size, int width, int height);
+    public native void docontent(byte[] val, int size, int width, int height);
 
 	/*
 	 * Settings

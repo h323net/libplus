@@ -39,8 +39,8 @@ public:
         e_audioOut,
         e_videoIn,
         e_videoOut,
-        e_extVideoIn,
-        e_extVideoOut,
+        e_contentIn,
+        e_contentOut,
         e_localVideoOut,
         e_NoOfMediaStream
     };
@@ -66,7 +66,7 @@ public:
         bool     m_shutdown;
     };
 
-    PStringArray SupportedFormats(MediaStream dir);
+    PStringArray SupportedFormats(unsigned dir);
 
     bool ProcessMediaSamples(unsigned & id, void * data, unsigned & size, unsigned & width, unsigned & height);
 
@@ -96,10 +96,10 @@ private:
 #define PlusSetting(name) \
     public: \
     PString get_##name() \
-    { PTRACE(4,"EP\tGet Setting " << #name << " " << m_##name); \
+    { /*PTRACE(4,"EP\tGet Setting " << #name << " " << m_##name);*/ \
     return m_##name; } \
     void set_##name(const PString & value) \
-    { PTRACE(4,"EP\tSet Setting " << #name << " to " << value); \
+    { /*PTRACE(4,"EP\tSet Setting " << #name << " to " << value);*/ \
         m_##name = value; \
         PString dft = "*"; \
         HandleSettingChange(PlusProcess::e_##name, #name, value, dft); \
@@ -272,9 +272,9 @@ public:
 
 
     // Media Handling
-    PlusMedia(Audio)
-    PlusMedia(Video)
-    PlusMedia(Content)
+    PlusMedia(audio)
+    PlusMedia(video)
+    PlusMedia(content)
 
 
     // overrides from h323plus

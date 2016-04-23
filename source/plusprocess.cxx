@@ -335,9 +335,9 @@ void PlusProcess::ProcessMediaSamples()
             case PlusMediaManager::e_audioOut: 
                 break;
             case PlusMediaManager::e_videoOut:
-                outVideo(m_mediaBuffer.GetPointer(), m_mediaBuffer.m_size, m_mediaBuffer.m_width, m_mediaBuffer.m_height);
+                outvideo(m_mediaBuffer.GetPointer(), m_mediaBuffer.m_size, m_mediaBuffer.m_width, m_mediaBuffer.m_height);
                 break;
-            case PlusMediaManager::e_extVideoOut:
+            case PlusMediaManager::e_contentOut:
                 break;
             default: break;
         }
@@ -345,9 +345,9 @@ void PlusProcess::ProcessMediaSamples()
 }
 
 // Media Handling
-PLUSProcessMediaBody(Audio)
-PLUSProcessMediaBody(Video)
-PLUSProcessMediaBody(Content)
+PLUSProcessMediaBody(audio)
+PLUSProcessMediaBody(video)
+PLUSProcessMediaBody(content)
 
 
 

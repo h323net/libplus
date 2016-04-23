@@ -61,8 +61,8 @@ static struct {
     { PlusMediaManager::e_audioOut,     0, 0, "" },
     { PlusMediaManager::e_videoIn,      0, 0, defVideoFormat },
     { PlusMediaManager::e_videoOut,     0, 0, defVideoFormat },
-    { PlusMediaManager::e_extVideoIn,   0, 0, defVideoFormat },
-    { PlusMediaManager::e_extVideoOut,  0, 0, defVideoFormat },
+    { PlusMediaManager::e_contentIn,    0, 0, defVideoFormat },
+    { PlusMediaManager::e_contentOut,   0, 0, defVideoFormat },
     { PlusMediaManager::e_localVideoOut,0, 0, defVideoFormat }
 };
 
@@ -70,8 +70,9 @@ static struct {
 PlusMediaManager::PlusMediaManager()
 {
     // Initialise the manager
-    for (unsigned i = 0; i < e_NoOfMediaStream; ++i)
-        m_queueMedia.insert(make_pair(i, Queue(defaultMedia[i].width, defaultMedia[i].height, defaultMedia[i].format)));
+    for (unsigned i = 0; i < e_NoOfMediaStream; ++i) {
+        m_queueMedia.insert(make_pair(defaultMedia[i].id, Queue(defaultMedia[i].width, defaultMedia[i].height, defaultMedia[i].format)));
+    }
 }
 
 
@@ -96,22 +97,23 @@ PlusMediaManager::Queue::Queue(unsigned width, unsigned height, const PString & 
 }
 
 
-PStringArray PlusMediaManager::SupportedFormats(MediaStream dir)
+PStringArray PlusMediaManager::SupportedFormats(unsigned dir)
 {
     if (dir >= e_NoOfMediaStream)
         return "";
 
+    
     switch (dir) {
         case e_audioIn:
         case e_audioOut:
             return "PCM";
 
         case e_videoIn:
-        case e_extVideoIn:
+        case e_contentIn:
             return Serialise(H323ColourConverter::GetColourConverterList(m_queueMedia[e_videoIn].m_format, false));
 
         case e_videoOut:
-        case e_extVideoOut:
+        case e_contentOut:
             return Serialise(H323ColourConverter::GetColourConverterList(m_queueMedia[e_videoOut].m_format, true));
         default:
             return "";
@@ -131,7 +133,7 @@ void PlusMediaManager::GetColourFormat(unsigned id, PString & colourFormat)
 
 PBoolean PlusMediaManager::SetColourFormat(unsigned id, const PString & colourFormat)
 {
-    if (id >= e_NoOfMediaStream)
+    if (id >= e_NoOfMediaStream || colourFormat.IsEmpty())
         return false;
 
     Queue & q = m_queueMedia[id];
@@ -147,11 +149,11 @@ void PlusMediaManager::SetVideoFormat(H323Channel::Directions dir, const PString
 {
     if (dir == H323Channel::IsTransmitter) {
         SetColourFormat(e_videoOut, colourFormat);
-        SetColourFormat(e_extVideoOut, colourFormat);
+        SetColourFormat(e_contentOut, colourFormat);
         SetColourFormat(e_localVideoOut, colourFormat);
     } else {
         SetColourFormat(e_videoIn, colourFormat);
-        SetColourFormat(e_extVideoIn, colourFormat);
+        SetColourFormat(e_contentIn, colourFormat);
     }
 }
 
@@ -1004,7 +1006,7 @@ void PlusEndPoint::PlaceCall(const PString & address)
     fire_callerid(address);
     FireStatus(uiConnectingCall);
     PString addr = address;
-    if (!gatekeeper)
+    if (!gatekeeper && !m_h46017GW)
         addr = address + PString("@") + m_h46017GW;
 
     MakeCall(addr, m_currentCallToken);
@@ -1294,17 +1296,17 @@ void PlusEndPoint::InitialiseDebug()
 // Media
 
 
-bool PlusEndPoint::inAudio(void * data, int size, int width, int height)
+bool PlusEndPoint::inaudio(void * data, int size, int width, int height)
 {
     return false;
 }
 
-bool PlusEndPoint::inVideo(void * data, int size, int width, int height)
+bool PlusEndPoint::invideo(void * data, int size, int width, int height)
 {
     return false;
 }
 
-bool PlusEndPoint::inContent(void * data, int size, int width, int height)
+bool PlusEndPoint::incontent(void * data, int size, int width, int height)
 {
     return false;
 }

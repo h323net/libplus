@@ -193,9 +193,9 @@ public:
 
     /* Media Handling
     */
-    PLUSProcessMedia(Audio)
-    PLUSProcessMedia(Video)
-    PLUSProcessMedia(Content)
+    PLUSProcessMedia(audio)
+    PLUSProcessMedia(video)
+    PLUSProcessMedia(content)
 
 	// Internal
     bool IsLoading();
