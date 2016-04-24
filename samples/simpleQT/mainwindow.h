@@ -27,7 +27,7 @@
 #include <map>
 #include <queue>
 #include <QTimer>
-#include <QMutex>
+#include <QQueue>
 #include <QVideoFrame>
 
 #include <QDebug>
@@ -95,10 +95,8 @@ private:
 
     // Manage Events
     QTimer *                  m_timer;       ///< event timer
-    std::queue<PlusEvent>     m_events;      ///< libPlus Events
-    QMutex                    m_mutEvents;
-    std::queue<PlusImage>     m_frames;      ///< libPlus Video Images
-    QMutex                    m_mutFrames;
+    QQueue<PlusEvent>         m_events;      ///< libPlus Events
+    QQueue<PlusImage>         m_frames;      ///< libPlus Video Images
 
     bool                      m_loading;
 };

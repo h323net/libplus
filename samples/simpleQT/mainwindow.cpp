@@ -37,12 +37,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // debugging
     m_libPLUS->settracing("6");
+    m_libPLUS->setcurdrvvideoplay("External");
     m_libPLUS->dovideosize("1","352","288");
 
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
 
-    m_timer->start(5);
+    m_timer->start(15);
 }
 
 MainWindow::~MainWindow()
@@ -66,9 +67,7 @@ void MainWindow::OnLibPlusEvent(int id, QString str1, QString str2, QString str3
         evt.str3 = str3;
         evt.str4 = str4;
 
-    m_mutEvents.lock();
-    m_events.push(evt);
-    m_mutEvents.unlock();
+    m_events.enqueue(evt);
 }
 
 
@@ -78,9 +77,7 @@ void MainWindow::OnLibPlusImage(int id, uchar * data, int width, int height)
     img.id = id;
     img.frame = QVideoFrame(QImage(data,width,height, QImage::Format_RGB32));
 
-    m_mutFrames.lock();
-    m_frames.push(img);
-    m_mutFrames.unlock();
+    m_frames.enqueue(img);
 }
 
 
@@ -93,9 +90,13 @@ void MainWindow::update()
 
 bool MainWindow::ProcessEvents()
 {
-    while (m_events.size() > 0) {
-        PlusEvent & evt = m_events.front();
-        bool success(evt.str1.toInt()==1);
+    PlusEvent evt;
+    bool success;
+    while (!m_events.isEmpty()) {
+        evt = m_events.head();
+        m_events.dequeue();
+
+        success = (evt.str1.toInt()==1);
         switch (evt.id) {
             case libPLUS::e_status:
                 ui->lblStatus->setText(evt.str2);
@@ -114,9 +115,6 @@ bool MainWindow::ProcessEvents()
             default:
                break;
         }
-        m_mutEvents.lock();
-        m_events.pop();
-        m_mutEvents.unlock();
     }
     return true;
 }
@@ -124,18 +122,20 @@ bool MainWindow::ProcessEvents()
 
 bool MainWindow::ProcessFrames()
 {
-      while (m_frames.size() > 0) {
-        PlusImage & img = m_frames.front();
-        switch (img.id) {
+    int id;
+    QVideoFrame frame;
+    while (!m_frames.isEmpty()) {
+        id = m_frames.head().id;
+        frame = m_frames.head().frame;
+        m_frames.dequeue();
+
+        switch (id) {
             case 1:
-                ui->video1->RenderFrame(img.frame);
+                ui->video1->RenderFrame(frame);
                 break;
             default:
                 break;
         }
-        m_mutFrames.lock();
-        m_frames.pop();
-        m_mutFrames.lock();
     }
     return true;
 }
