@@ -75,6 +75,12 @@
 #define defAudioDelay 150
 
 #define defTraceFile "libplus_trace.dat"
+#define defUserName  "default"
+#ifdef _DEBUG
+#define defTraceLevel 6
+#else
+#define defTraceLevel 0
+#endif
 
 #define defLanguage "EN-US"
 

@@ -269,7 +269,6 @@ PString GetVideoDevice(PBoolean isEncoding, const PString & driver) {
     // Look for a useful device
     PString deviceName;
     for (PINDEX i = 0; i < devices.GetSize(); i++) {
-        PTRACE(4, devices[i]);
         PCaselessString devName = devices[i];
         if (devName != "*.yuv" && devName != "fake" && devName != "NULL") {
             deviceName = devName;
@@ -369,6 +368,13 @@ PString GetDriverList(PlusProcess::Setting setting)
 #define INIT_SET(name,value) \
     ini_##name(value);
 
+#define INIT_RESET(name) \
+    INIT_SET(name,m_##name) 
+
+#define INIT(reset, name, value) \
+    if (reset) INIT_RESET(name) \
+    else INIT_SET(name,value)
+
 /////////////////////////////////////////////////////////////////////////
 
 #ifdef H323_DATASTORE
@@ -382,7 +388,7 @@ PlusEndPoint::PlusEndPoint(PlusProcess & process)
 #endif
 {
 
-    InitialiseSettings();
+    InitialiseSettings(false);
 
     DEVICE_DECL(videoplay)
     DEVICE_DECL(videorec)
@@ -402,21 +408,25 @@ PlusEndPoint::~PlusEndPoint()
 #endif
 }
 
-void PlusEndPoint::InitialiseSettings()
+void PlusEndPoint::InitialiseSettings(bool reset)
 {
-    INIT_SET(version, LIBPLUS_VERSION)
-    INIT_SET(tracing,"0") 
+
 #ifdef H323_DATASTORE
-    INIT_SET(username, m_dataStore.GetDefaultID())
+    PString user = m_dataStore.GetDefaultID();
+    PTRACE(6, "EP\tInitialise settings for " << user << " user.");
 #else
-    INIT_SET(username, GetLocalUserName())
+    PString user = GetLocalUserName();
 #endif
-    INIT_SET(password, "") 
-    INIT_SET(server, "")
-    INIT_SET(quality, "1") 
-    INIT_SET(accessability, "0") 
-    INIT_SET(content, "0")
-    INIT_SET(autoanswer, "0") 
+
+    INIT(reset, version, LIBPLUS_VERSION)
+    INIT(reset, tracing, PString(defTraceLevel))
+    INIT(reset, username, user)
+    INIT(reset, password, "") 
+    INIT(reset, server, "")
+    INIT(reset, quality, "1") 
+    INIT(reset, accessability, "0") 
+    INIT(reset, content, "0")
+    INIT(reset, autoanswer, "0") 
     // drvvideoplay
     // drvvideorec
     // drvaudioplay
@@ -433,35 +443,35 @@ void PlusEndPoint::InitialiseSettings()
     // audioplay
     // videoplay
     // videorec
-    INIT_SET(call, "") 
-    INIT_SET(audiomute,"0") 
-    INIT_SET(videomute,"0")
-    INIT_SET(callstate,"0") 
-    INIT_SET(h281support,"1") 
-    INIT_SET(t140support, "0") 
-    INIT_SET(h284support, "0") 
-    INIT_SET(usere164, "")
-    INIT_SET(useruri, "") 
-    INIT_SET(showlocalvideo, "1") 
-    INIT_SET(h281call, "0") 
-    INIT_SET(t140call, "0") 
-    INIT_SET(h284call, "0") 
-    INIT_SET(initialised, "0") 
-    INIT_SET(language, defLanguage)
-    INIT_SET(listenport, defListenport)
+    INIT(reset, call, "") 
+    INIT(reset, audiomute,"0") 
+    INIT(reset, videomute,"0")
+    INIT(reset, callstate,"0") 
+    INIT(reset, h281support,"1") 
+    INIT(reset, t140support, "0") 
+    INIT(reset, h284support, "0") 
+    INIT(reset, usere164, "")
+    INIT(reset, useruri, "") 
+    INIT(reset, showlocalvideo, "1") 
+    INIT(reset, h281call, "0") 
+    INIT(reset, t140call, "0") 
+    INIT(reset, h284call, "0") 
+    INIT(reset, initialised, "0") 
+    INIT(reset, language, defLanguage)
+    INIT(reset, listenport, defListenport)
     // videoformats
-    INIT_SET(videoinformat, defVideoFormat)
-    INIT_SET(videooutformat, defVideoFormat)
-    INIT_SET(secondvideo, "0")
+    INIT(reset, videoinformat, defVideoFormat)
+    INIT(reset, videooutformat, defVideoFormat)
+    INIT(reset, secondvideo, "0")
 
-    INIT_SET(encryptsignal, "1") 
-    INIT_SET(encryptmedia, "1")
-    INIT_SET(encryptmediahigh, "0")
+    INIT(reset, encryptsignal, "1") 
+    INIT(reset, encryptmedia, "1")
+    INIT(reset, encryptmediahigh, "0")
 
     // Internal Use Only
-    INIT_SET(dhOID, "")
-    INIT_SET(dhPrime, "")
-    INIT_SET(dhGenerator, "")
+    INIT(reset, dhOID, "")
+    INIT(reset, dhPrime, "")
+    INIT(reset, dhGenerator, "")
 
     // IMPL: Setting Names here!
 
@@ -591,10 +601,12 @@ PBoolean PlusEndPoint::OpenAudioChannel(H323Connection & connection,
 
 PBoolean PlusEndPoint::OpenVideoChannel(H323Connection & connection, PBoolean isEncoding, H323VideoCodec & codec)
 {
-    PTRACE(2, "VID\tOpening video channel " << (isEncoding ? "encoder" : "decoder"));
 
     PString deviceDriver = isEncoding ? m_curdrvvideorec : m_curdrvvideoplay;
     PString deviceName   = isEncoding ? m_videorec : m_videoplay;
+
+    PTRACE(2, "VID\tOpening video channel " << (isEncoding ? "encoder" : "decoder") 
+                    << " using driver: " << deviceDriver << " device: " << deviceName);
 
 #if PTLIB_VER >= 2120
     PVideoDevice * device = isEncoding ? (PVideoDevice *)PVideoInputDevice::CreateOpenedDevice(deviceDriver, deviceName, FALSE)
@@ -1211,40 +1223,68 @@ void PlusEndPoint::InitialiseDebug()
     if (m_tracing.AsInteger() == 0)
         return;
 
-    PString fileName = defTraceFile;
-    PTrace::Initialise(m_tracing.AsInteger(), fileName,
-        PTrace::DateAndTime | PTrace::TraceLevel | PTrace::FileAndLine);
+    if (!defTraceLevel) {
+        PTrace::Initialise(m_tracing.AsInteger(), defTraceFile,
+            PTrace::DateAndTime | PTrace::TraceLevel | PTrace::FileAndLine);
+    } else if (m_tracing != defTraceLevel) {
+        PTrace::SetLevel(m_tracing.AsInteger());
+    }
 
     PTRACE(1, "EP\tlibPLUS v" << m_version << " Trace Level " << m_tracing );
     PTRACE(4, "EP\t---------------------");
 
+    int i;
     PStringArray drivers = PSoundChannel::GetDriverNames();
-    PTRACE(4, "EP\tAvailable Audio Drivers: " << drivers);
+    PTRACE(4, "EP\tAvailable Audio Drivers: " << drivers.GetSize());
+    if (drivers.GetSize() > 0) {
+        for (i = 0; i < drivers.GetSize(); i++) {
+            bool def = (drivers[i] == m_curdrvaudioplay);
+            PTRACE(4, "EP\tDriver " << i << ": " << drivers[i] << "  " << (def ? "(set)" : ""));
+        }
+    }
     drivers.SetSize(0);
-    drivers = PVideoInputDevice::GetDriverNames();
-    PTRACE(4, "EP\tAvailable Video Input Drivers: " << drivers);
-    drivers.SetSize(0);
-    drivers = PVideoOutputDevice::GetDriverNames();
-    PTRACE(4, "EP\tAvailable Video Output Drivers: " << drivers);
 
+    PTRACE(4, "EP\t---------------------");
+    drivers = PVideoInputDevice::GetDriverNames();
+    PTRACE(4, "EP\tAvailable Video Record Drivers: " << drivers.GetSize());
+    if (drivers.GetSize() > 0) {
+        for (i = 0; i < drivers.GetSize(); i++) {
+            bool def = (drivers[i] == m_curdrvvideorec);
+            PTRACE(4, "EP\tDriver " << i << ": " << drivers[i] << "  " << (def ? "(set)" : ""));
+        }
+    }
+    drivers.SetSize(0);
+
+    PTRACE(4, "EP\t---------------------");
+    drivers = PVideoOutputDevice::GetDriverNames();
+    PTRACE(4, "EP\tAvailable Video Play Drivers: " << drivers.GetSize());
+    if (drivers.GetSize() > 0) {
+        for (i = 0; i < drivers.GetSize(); i++) {
+            bool def = (drivers[i] == m_curdrvvideoplay);
+            PTRACE(4, "EP\tDriver " << i << ": " << drivers[i] << "  " << (def ? "(set)" : ""));
+        }
+    }
+    drivers.SetSize(0);
+
+    PTRACE(4, "EP\t---------------------");
     PStringArray devSoundRec;
     EnumerateSoundDevices(true, m_curdrvaudiorec, devSoundRec);
-    PTRACE(4, "EP\tAvailable Audio Record Devices: " << devSoundRec.GetSize());
+    PTRACE(4, "EP\tAvailable Audio Record Devices: " << devSoundRec.GetSize() << " using " << m_curdrvaudiorec << " Driver");
     if (devSoundRec.GetSize() > 0) {
-        for (int k = 0; k < devSoundRec.GetSize(); k++) {
-            bool def = (devSoundRec[k] == m_audiorec);
-            PTRACE(4, "EP\tDevice " << k << ": " << devSoundRec[k] << "  " << (def ? "(set)" : ""));
+        for (i = 0; i < devSoundRec.GetSize(); i++) {
+            bool def = (devSoundRec[i] == m_audiorec);
+            PTRACE(4, "EP\tDevice " << i << ": " << devSoundRec[i] << "  " << (def ? "(set)" : ""));
         }
     }
 
     PTRACE(4, "EP\t---------------------");
     PStringArray devSoundPlay;
     EnumerateSoundDevices(false, m_curdrvaudioplay, devSoundPlay);
-    PTRACE(4, "EP\tAvailable Audio Play Devices: " << devSoundPlay.GetSize());
+    PTRACE(4, "EP\tAvailable Audio Play Devices: " << devSoundPlay.GetSize() << " using " << m_curdrvaudioplay << " Driver");
     if (devSoundPlay.GetSize() > 0) {
-        for (int l = 0; l < devSoundPlay.GetSize(); l++) {
-            bool def = (devSoundPlay[l] == m_audioplay);
-            PTRACE(4, "EP\tDevice " << l << ": " << devSoundPlay[l] << "  " << (def ? "(set)" : ""));
+        for (i = 0; i < devSoundPlay.GetSize(); i++) {
+            bool def = (devSoundPlay[i] == m_audioplay);
+            PTRACE(4, "EP\tDevice " << i << ": " << devSoundPlay[i] << "  " << (def ? "(set)" : ""));
         }
     }
 
@@ -1252,17 +1292,17 @@ void PlusEndPoint::InitialiseDebug()
     PStringArray devVideoRec;
     EnumerateVideoDevices(true, m_curdrvvideorec, devVideoRec);
     if (devVideoRec.GetSize() > 0) {
-        PTRACE(4, "EP\tAvailable Video Record Devices: " << devVideoRec.GetSize());
-        for (int l = 0; l < devVideoRec.GetSize(); l++) {
-            bool def = (devVideoRec[l] == m_videorec);
-            PTRACE(4, "EP\tDevice " << l << ": " << devVideoRec[l] << "  " << (def ? "(set)" : ""));
+        PTRACE(4, "EP\tAvailable Video Record Devices: " << devVideoRec.GetSize() << " using " << m_curdrvvideorec << " Driver");
+        for (i = 0; i < devVideoRec.GetSize(); i++) {
+            bool def = (devVideoRec[i] == m_videorec);
+            PTRACE(4, "EP\tDevice " << i << ": " << devVideoRec[i] << "  " << (def ? "(set)" : ""));
         }
 
-        for (int j = 0; j < devVideoRec.GetSize(); j++) {
+        for (i = 0; i < devVideoRec.GetSize(); i++) {
             PVideoInputDevice::Capabilities caps;
-            if (PVideoInputDevice::GetDeviceCapabilities(devVideoRec[j], m_curdrvvideorec, &caps)) {
+            if (PVideoInputDevice::GetDeviceCapabilities(devVideoRec[i], m_curdrvvideorec, &caps)) {
 
-                PTRACE(4, "EP\tDevice " << j << ": " << devVideoRec[j] << " capabilities.");
+                PTRACE(4, "EP\tDevice " << i << ": " << devVideoRec[i] << " capabilities.");
                 for (std::list<PVideoFrameInfo>::const_iterator r = caps.framesizes.begin(); r != caps.framesizes.end(); ++r) {
                     PTRACE(4, "EP\t   w: " << r->GetFrameWidth() << " h: " << r->GetFrameHeight() << " fmt: " << r->GetColourFormat() << " fps: " << r->GetFrameRate());
                 }
@@ -1281,16 +1321,17 @@ void PlusEndPoint::InitialiseDebug()
         }
     }
 
+    PTRACE(4, "EP\t---------------------");
     PStringArray devVideoPlay;
     EnumerateVideoDevices(false, m_curdrvvideoplay, devVideoPlay);
     if (devVideoPlay.GetSize() > 0) {
-        PTRACE(4, "EP\tAvailable Video Play Devices: " << devVideoPlay.GetSize());
-        for (int l = 0; l < devVideoPlay.GetSize(); l++) {
-            bool def = (devVideoPlay[l] == m_videoplay);
-            PTRACE(4, "EP\tDevice " << l << ": " << devVideoPlay[l] << "  " << (def ? "(set)" : ""));
+        PTRACE(4, "EP\tAvailable Video Play Devices: " << devVideoPlay.GetSize() << " using " << m_curdrvvideoplay << " Driver");
+        for (i = 0; i < devVideoPlay.GetSize(); i++) {
+            bool def = (devVideoPlay[i] == m_videoplay);
+            PTRACE(4, "EP\tDevice " << i << ": " << devVideoPlay[i] << "  " << (def ? "(set)" : ""));
         }
     }
-
+    PTRACE(4, "EP\t---------------------");
 }
 #endif  // PTRACING
 

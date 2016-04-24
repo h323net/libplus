@@ -96,10 +96,10 @@ private:
 #define PlusSetting(name) \
     public: \
     PString get_##name() \
-    { /*PTRACE(4,"EP\tGet Setting " << #name << " " << m_##name);*/ \
-    return m_##name; } \
+    { PTRACE(6,"EP\tGet setting m_" << #name << " val: " << m_##name); \
+        return m_##name; } \
     void set_##name(const PString & value) \
-    { /*PTRACE(4,"EP\tSet Setting " << #name << " to " << value);*/ \
+    { PTRACE(6,"EP\tSet setting m_" << #name << " from " << m_##name << " to " << value); \
         m_##name = value; \
         PString dft = "*"; \
         HandleSettingChange(PlusProcess::e_##name, #name, value, dft); \
@@ -107,7 +107,7 @@ private:
     void ini_##name(const PString & value) \
     {   PString tempval = value; \
         HandleSettingChange(PlusProcess::e_##name, #name, "", tempval); \
-        PTRACE(4,"EP\tInitial " << #name << " to " << tempval); \
+        PTRACE(6,"EP\tInitial m_" << #name << " to " << tempval); \
         m_##name = tempval; \
     } \
     protected: \
@@ -319,9 +319,9 @@ public:
 
     PlusMediaManager &  GetMediaManager();
 
-protected:
+    void InitialiseSettings(bool reset = false);
 
-    void InitialiseSettings();
+protected:
 
     /*  HandleSettingChange
         Handle changes in settings (if required)

@@ -28,7 +28,7 @@
 
 #define PlusProcessGetSetting(name)  case e_##name: return m_endpoint->get_##name();
 #define PlusProcessSetSetting(name)  case e_##name: m_endpoint->set_##name(value); break;
-#define PlusProcessSetUserRestart    case e_username: SetLocalUserName(value); break;
+#define PlusProcessSet(name)         case e_##name: set##name(value); break;
 
 #define PlusProcessMethod(name)  case e_##name: m_endpoint->Do##name(p1,p2,p3,p4); break;
 
@@ -41,8 +41,7 @@ bool PlusProcess::out##name(void * data, int size, int width, int height) { retu
 // Locals
 
 PBoolean l_vEndPointLocked = true;   // Whether the endpoint is not available to receive settings
-PString  l_vLocalUser = "default";
-
+PString  l_vLocalUser = defUserName;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -55,6 +54,11 @@ PlusProcess::PlusProcess(PLUSdevice * apiInstance)
         OPENH323_MAJOR, OPENH323_MINOR, ReleaseCode, OPENH323_BUILD),
     m_endpoint(NULL), m_eventCallBack(apiInstance), m_endpointThread(NULL)
 {
+
+    if (defTraceLevel > 0)
+        PTrace::Initialise( defTraceLevel, defTraceFile, 
+            PTrace::DateAndTime | PTrace::TraceLevel | PTrace::FileAndLine);
+
     // Open DB to default settings Table
 #ifdef H323_DATASTORE
     m_dataStore = new H323DataStore(dataStoreName, dataStoreKey, defDBTable, defDBId);
@@ -104,15 +108,28 @@ void PlusProcess::Initialise()
 }
 
 
-void PlusProcess::SetLocalUserName(const PString & username)
+void PlusProcess::setusername(const PString & username)
 {
-    // When we set the local username we have to unitialise and reinitialise the endpoint.
-    l_vLocalUser = username;
+    if (l_vLocalUser == username)
+        return;
 
-    Uninitialise();
-    PProcess::Sleep(200);
-    Initialise();
+    if (username.IsEmpty())
+        l_vLocalUser = defUserName;
+    else
+        l_vLocalUser = username;
 
+#ifdef H323_DATASTORE
+    if (m_dataStore) {
+        m_dataStore->SetTable(defDBTable);
+        m_dataStore->SetString(defDBSection, defDBKey, l_vLocalUser);
+
+        m_dataStore->SetTable(defDBSetTable);
+        m_dataStore->SetDefaultID(l_vLocalUser);
+        m_dataStore->SetDefaultSection(defDBSectVar);
+    }
+#endif
+    m_endpoint->set_username(l_vLocalUser);
+    m_endpoint->InitialiseSettings(true);
 }
 
 bool PlusProcess::IsLoading()
@@ -156,7 +173,7 @@ void PlusProcess::SetSetting(Setting set, const PString & value)
     switch (set) {
         PlusProcessSetSetting(version)
         PlusProcessSetSetting(tracing)
-        PlusProcessSetUserRestart     //PlusProcessSetSetting(username)
+        PlusProcessSet(username)   // Setting username changes profile
         PlusProcessSetSetting(password)
         PlusProcessSetSetting(server)
         PlusProcessSetSetting(quality)

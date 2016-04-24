@@ -208,7 +208,8 @@ protected:
     void Initialise();
     void Uninitialise();
 
-    void SetLocalUserName(const PString & username);
+    void setusername(const PString & username);
+
     void InternalDoMethod(Method id, const PString & p1, const PString & p2, const PString & p3, const PString & p4);
 
     void ProcessMessages();
