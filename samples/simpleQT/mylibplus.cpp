@@ -32,6 +32,16 @@ mylibPLUS::mylibPLUS(MainWindow * window)
 
 }
 
+void mylibPLUS::InitialiseQT()
+{
+    Load();
+
+    //settracing("6");
+    setcurdrvvideoplay("External");
+    setvideooutformat("BGR32");
+    //dovideosize(std::to_string((long)libPLUS::videoOut).c_str(),"352","288");
+}
+
 bool mylibPLUS::HandleEvent(int id, const char * str1, const char * str2,
                                     const char * str3, const char * str4)
 {
@@ -52,9 +62,11 @@ bool mylibPLUS::HandleEvent(int id, const char * str1, const char * str2,
     return true;
 }
 
-bool mylibPLUS::outvideo(const void * /*data*/, int size, int width, int height)
+bool mylibPLUS::outvideo(const void * data, int size, int width, int height)
 {
    qDebug() << "Video Rec'd " << size << " w:" << width << " h:" << height;
+
+   m_window->OnLibPlusImage(1, (uchar *)data, width, height);
 
    return true;
 }

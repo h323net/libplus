@@ -32,6 +32,8 @@ class mylibPLUS  : public libPLUS
 
     mylibPLUS(MainWindow * window);
 
+    void InitialiseQT();
+
     // Collective Event Handler
     virtual bool HandleEvent(int id, const char * str1, const char * str2,
                                      const char * str3, const char * str4);

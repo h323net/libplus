@@ -87,6 +87,7 @@ protected:
     void LoadDisplay(bool toEnable);
     void EnableDisplay(bool toEnable);
     void SetInCall(bool inCall);
+    void LoadDefaultSettings();
 
 private:
     Ui::MainWindow *ui;
@@ -98,6 +99,7 @@ private:
     QQueue<PlusEvent>         m_events;      ///< libPlus Events
     QQueue<PlusImage>         m_frames;      ///< libPlus Video Images
 
+    bool                      m_videoRunning;
     bool                      m_loading;
 };
 

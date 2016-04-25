@@ -28,17 +28,12 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow), m_loading(false)
+    ui(new Ui::MainWindow), m_videoRunning(false), m_loading(false)
 {
     ui->setupUi(this);
 
     m_libPLUS = new mylibPLUS(this);
-    m_libPLUS->Load();
-
-    // debugging
-    m_libPLUS->settracing("6");
-    m_libPLUS->setcurdrvvideoplay("External");
-    m_libPLUS->dovideosize("1","352","288");
+    m_libPLUS->InitialiseQT();
 
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -125,6 +120,11 @@ bool MainWindow::ProcessFrames()
     int id;
     QVideoFrame frame;
     while (!m_frames.isEmpty()) {
+        if (!m_videoRunning) {
+            m_frames.dequeue();
+            continue;
+        }
+
         id = m_frames.head().id;
         frame = m_frames.head().frame;
         m_frames.dequeue();
@@ -162,7 +162,7 @@ void MainWindow::LoadDisplay(bool toEnable)
         for (int i=0; i < devlist1.size(); ++i)
             ui->lbVideoPlay->addItem(devlist1[i]);
 
-        ui->lbVideoPlay->setCurrentText(QString(m_libPLUS->getcurdrvaudioplay()));
+        ui->lbVideoPlay->setCurrentText(QString(m_libPLUS->getvideoplay()));
 
 
         // formats
@@ -203,13 +203,28 @@ void MainWindow::SetInCall(bool inCall)
         ui->lblNumber->setEnabled(false);
         ui->btnCall->setChecked(true);
         ui->btnStart->setEnabled(false);
+        m_videoRunning = true;
     } else {
         ui->btnCall->setText("Call");
         ui->btnCall->setChecked(false);
         ui->lblNumber->setEnabled(true);
         ui->lblNumber->setText("");
         ui->btnStart->setEnabled(true);
+        m_videoRunning = false;
+        ui->video1->StopSurface();
     }
+}
+
+///////////////////////////////////////////////////////////
+//  Default Settings
+
+void MainWindow::LoadDefaultSettings()
+{
+
+    m_libPLUS->setusername("testuser");
+    m_libPLUS->setpassword("");
+    m_libPLUS->setserver("");
+
 }
 
 ////////////////////////////////////////////////////////
@@ -218,6 +233,7 @@ void MainWindow::SetInCall(bool inCall)
 void MainWindow::on_btnStart_clicked(bool checked)
 {
     if (checked) {
+        LoadDefaultSettings();
         m_libPLUS->dostart();
     } else {
         m_libPLUS->dostop();
