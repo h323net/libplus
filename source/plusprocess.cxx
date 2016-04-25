@@ -30,7 +30,9 @@
 #define PlusProcessSetSetting(name)  case e_##name: m_endpoint->set_##name(value); break;
 #define PlusProcessSet(name)         case e_##name: set##name(value); break;
 
-#define PlusProcessMethod(name)  case e_##name: m_endpoint->Do##name(p1,p2,p3,p4); break;
+#define PlusProcessMethod(name)  case e_##name: { \
+                                        PTRACE(6, "EP\tDo Method " << #name << " vals: " << p1 << " " << p2 << " " << p3 << " " << p4); \
+                                        m_endpoint->Do##name(p1,p2,p3,p4); break; }
 
 #define PLUSProcessMediaBody(name) \
 bool PlusProcess::in##name(void * data, int size, int width, int height) { return false; } \
