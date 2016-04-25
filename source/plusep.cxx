@@ -166,7 +166,7 @@ PBoolean PlusMediaManager::GetFrameSize(unsigned id, unsigned & width, unsigned 
     Queue & q = m_queueMedia[id];
     width = q.m_width;
     height = q.m_height;
-    return true;
+    return (q.m_width > 0 && q.m_height > 0);
 }
 
 
