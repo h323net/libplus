@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>374</width>
-    <height>474</height>
+    <height>518</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
     <property name="geometry">
      <rect>
       <x>300</x>
-      <y>300</y>
+      <y>310</y>
       <width>60</width>
       <height>25</height>
      </rect>
@@ -47,8 +47,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>300</y>
-      <width>280</width>
+      <y>400</y>
+      <width>351</width>
       <height>25</height>
      </rect>
     </property>
@@ -73,7 +73,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>330</y>
+      <y>430</y>
       <width>51</width>
       <height>25</height>
      </rect>
@@ -85,63 +85,95 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lblNumber">
+   <widget class="QLineEdit" name="txtNumber">
     <property name="enabled">
      <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>330</y>
+      <y>430</y>
       <width>221</width>
       <height>25</height>
      </rect>
     </property>
    </widget>
-   <widget class="QComboBox" name="lbVideoPlay">
+   <widget class="QLineEdit" name="txtUserName">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>360</y>
-      <width>151</width>
-      <height>22</height>
+      <y>310</y>
+      <width>221</width>
+      <height>25</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="lblPlayDev">
+   <widget class="QLineEdit" name="txtPassword">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>340</y>
+      <width>221</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="txtServer">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>370</y>
+      <width>221</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblUserName">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>360</y>
+      <y>310</y>
       <width>51</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Video Dev</string>
+     <string>UserName</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lblFormat">
+   <widget class="QLabel" name="lblPassword">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>360</y>
-      <width>21</width>
+      <x>10</x>
+      <y>340</y>
+      <width>51</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Fmt</string>
+     <string>Password</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="lbFmt">
+   <widget class="QLabel" name="lblServer">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>360</y>
-      <width>101</width>
+      <x>10</x>
+      <y>370</y>
+      <width>51</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>Server</string>
     </property>
    </widget>
   </widget>

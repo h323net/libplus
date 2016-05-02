@@ -39,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
 
     m_timer->start(15);
+
+   LoadDisplaySettings();
 }
 
 MainWindow::~MainWindow()
@@ -148,39 +150,16 @@ void MainWindow::LoadDisplay(bool toEnable)
 {
     m_loading = true;
 
+    ui->txtUserName->setEnabled(!toEnable);
+    ui->txtPassword->setEnabled(!toEnable);
+    ui->txtServer->setEnabled(!toEnable);
+
     ui->btnCall->setEnabled(toEnable);
-    ui->lblNumber->setEnabled(toEnable);
-    ui->lbFmt->setEnabled(toEnable);
-    ui->lbVideoPlay->setEnabled(toEnable);
+    ui->txtNumber->setEnabled(toEnable);
 
-    if (toEnable) {
-        // devices
-        QString dev1(m_libPLUS->getdrvvideoplay());
-        QStringList devlist1 = dev1.split(';');
-
-        ui->lbVideoPlay->clear();
-        for (int i=0; i < devlist1.size(); ++i)
-            ui->lbVideoPlay->addItem(devlist1[i]);
-
-        ui->lbVideoPlay->setCurrentText(QString(m_libPLUS->getvideoplay()));
-
-
-        // formats
-        QString dev2(m_libPLUS->getvideoformats());
-        QStringList devlist2 = dev2.split(';');
-
-        ui->lbFmt->clear();
-        for (int i=0; i < devlist2.size(); ++i)
-            ui->lbFmt->addItem(devlist2[i]);
-
-        ui->lbFmt->setCurrentText(QString(m_libPLUS->getvideooutformat()));
-    } else {
-
+    if (!toEnable) {
         ui->lblStatus->clear();
-        ui->lblNumber->clear();
-        ui->lbFmt->clear();
-        ui->lbVideoPlay->clear();
-
+        ui->txtNumber->clear();
     }
 
     m_loading = false;
@@ -200,15 +179,15 @@ void MainWindow::SetInCall(bool inCall)
 {
     if (inCall) {
         ui->btnCall->setText("HangUp");
-        ui->lblNumber->setEnabled(false);
+        ui->txtNumber->setEnabled(false);
         ui->btnCall->setChecked(true);
         ui->btnStart->setEnabled(false);
         m_videoRunning = true;
     } else {
         ui->btnCall->setText("Call");
         ui->btnCall->setChecked(false);
-        ui->lblNumber->setEnabled(true);
-        ui->lblNumber->setText("");
+        ui->txtNumber->setEnabled(true);
+        ui->txtNumber->setText("");
         ui->btnStart->setEnabled(true);
         m_videoRunning = false;
         ui->video1->StopSurface();
@@ -218,13 +197,15 @@ void MainWindow::SetInCall(bool inCall)
 ///////////////////////////////////////////////////////////
 //  Default Settings
 
-void MainWindow::LoadDefaultSettings()
+void MainWindow::LoadDisplaySettings()
 {
+    m_loading = true;
 
-    m_libPLUS->setusername("testuser");
-    m_libPLUS->setpassword("");
-    m_libPLUS->setserver("");
+    ui->txtUserName->setText(m_libPLUS->getusername());
+    ui->txtPassword->setText(m_libPLUS->getpassword());
+    ui->txtServer->setText(m_libPLUS->getserver());
 
+    m_loading = false;
 }
 
 ////////////////////////////////////////////////////////
@@ -233,7 +214,6 @@ void MainWindow::LoadDefaultSettings()
 void MainWindow::on_btnStart_clicked(bool checked)
 {
     if (checked) {
-        LoadDefaultSettings();
         m_libPLUS->dostart();
     } else {
         m_libPLUS->dostop();
@@ -242,7 +222,7 @@ void MainWindow::on_btnStart_clicked(bool checked)
 
 void MainWindow::on_btnCall_clicked(bool checked)
 {
-    QString number = ui->lblNumber->text();
+    QString number = ui->txtNumber->text();
     if (checked && (number.size() >0)) {
         m_libPLUS->doplaceCall(number.toStdString().c_str());
     } else {
@@ -250,15 +230,17 @@ void MainWindow::on_btnCall_clicked(bool checked)
     }
 }
 
-void MainWindow::on_lbVideoPlay_currentIndexChanged(const QString &arg1)
+void MainWindow::on_txtUserName_textChanged(const QString &arg1)
 {
-    if (!m_loading)
-        m_libPLUS->setcurdrvvideoplay(arg1.toStdString().c_str());
+    m_libPLUS->setusername(arg1.toStdString().c_str());
 }
 
-void MainWindow::on_lbFmt_currentIndexChanged(const QString &arg1)
+void MainWindow::on_txtPassword_textChanged(const QString &arg1)
 {
-    if (!m_loading) {
-        m_libPLUS->setvideooutformat(arg1.toStdString().c_str());
-    }
+    m_libPLUS->setpassword(arg1.toStdString().c_str());
+}
+
+void MainWindow::on_txtServer_textChanged(const QString &arg1)
+{
+    m_libPLUS->setserver(arg1.toStdString().c_str());
 }

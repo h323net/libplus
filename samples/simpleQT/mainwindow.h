@@ -79,15 +79,17 @@ private slots:
 
     void on_btnCall_clicked(bool checked);
 
-    void on_lbVideoPlay_currentIndexChanged(const QString &arg1);
+    void on_txtUserName_textChanged(const QString &arg1);
 
-    void on_lbFmt_currentIndexChanged(const QString &arg1);
+    void on_txtPassword_textChanged(const QString &arg1);
+
+    void on_txtServer_textChanged(const QString &arg1);
 
 protected:
     void LoadDisplay(bool toEnable);
     void EnableDisplay(bool toEnable);
     void SetInCall(bool inCall);
-    void LoadDefaultSettings();
+    void LoadDisplaySettings();
 
 private:
     Ui::MainWindow *ui;
