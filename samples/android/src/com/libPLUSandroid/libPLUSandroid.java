@@ -85,6 +85,7 @@ public class libPLUSandroid extends Activity
     public native void dosecondCall(String p1);
     public native void dostop();
     public native void dovideosize(String p1, String p2, String p3);
+	public native void doaudioformat(String p1, String p2, String p3, String p4);
     public native void dodhParameters();
     // IMPL: Method Names Here
 

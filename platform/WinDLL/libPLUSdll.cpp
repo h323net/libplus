@@ -230,6 +230,7 @@ libDLLMethBody0(realTimeTextNewLine)
 libDLLMethBody1(secondCall)
 libDLLMethBody0(stop)
 libDLLMethBody3(videosize)
+libDLLMethBody4(audioformat)
 libDLLMethBody0(dhParameters)
 // IMPL: Method Names here
 

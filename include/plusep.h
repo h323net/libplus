@@ -57,11 +57,14 @@ public:
     {
         Queue();
 
-        Queue(unsigned width, unsigned height, const PString & format);
+        Queue(unsigned v1, unsigned v2, const PString & v3, unsigned v4, unsigned v5);
 
-        unsigned m_width;
-        unsigned m_height;
-        PString  m_format;
+        unsigned m_v1;   // Audio sampleRate        Video Width
+        unsigned m_v2;   // Audio bytes/sample      Video Height
+        PString  m_v3;   // Audio NA                Video ColourFormat
+        unsigned m_v4;   // Audio #Channels         Video NA
+        unsigned m_v5;   // Audio SampleTime        Video NA
+
         PMutex   m_mutex;
         bool     m_shutdown;
     };
@@ -70,7 +73,11 @@ public:
 
     bool ProcessMediaSamples(unsigned & id, void * data, unsigned & size, unsigned & width, unsigned & height);
 
-    // Audio Read/Write Functions
+    void SetAudioFormat(unsigned sampleRate, unsigned bytesPerSample, unsigned noChannels, unsigned sampleTime);
+
+    virtual PBoolean SetAudioFormat(unsigned id, unsigned sampleRate, unsigned bytesPerSample, unsigned noChannels, unsigned sampleTime);
+    virtual void     GetAudioFormat(unsigned id, unsigned & sampleRate, unsigned & bytesPerSample, unsigned & noChannels, unsigned & sampleTime);
+
     virtual PBoolean SetColourFormat(unsigned id, const PString & colourFormat);
     virtual void     GetColourFormat(unsigned id, PString & colourFormat);
 
@@ -79,7 +86,9 @@ public:
     virtual PBoolean GetFrameSize(unsigned id, unsigned & width, unsigned & height);
     virtual PBoolean SetFrameSize(unsigned id, unsigned width, unsigned height);
 
-    virtual bool Write(unsigned id, void * data, unsigned size, unsigned width, unsigned height);
+    virtual bool Write(unsigned id, void * data, unsigned size, unsigned width=0, unsigned height=0);
+
+    virtual bool Read(unsigned id, bool toBlock, void * data, unsigned size);
     virtual bool Read(unsigned id, bool toBlock, void * data, unsigned & size, unsigned & width, unsigned & height);
 
 private:
@@ -248,6 +257,7 @@ public:
 #endif
     }
     PlusMethod(videosize) { m_mediaManager.SetFrameSize((unsigned)p1.AsInteger(), (unsigned)p2.AsInteger(), (unsigned)p3.AsInteger()); }
+    PlusMethod(audioformat) { m_mediaManager.SetAudioFormat((unsigned)p1.AsInteger(), (unsigned)p2.AsInteger(), (unsigned)p3.AsInteger(), (unsigned)p4.AsInteger()); }
     PlusMethod(userMethod) {}   // Not used but there for GCC warning
     // IMPL: Method Names here
 

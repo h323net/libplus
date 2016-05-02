@@ -53,17 +53,19 @@ PString Serialise(const PStringArray & strarray) {
 
 static struct {
     PlusMediaManager::MediaStream id;
-    unsigned width;
-    unsigned height;
-    PString  format;
+    unsigned v1;
+    unsigned v2;
+    PString  v3;
+    unsigned v4;
+    unsigned v5;
 } defaultMedia[PlusMediaManager::e_NoOfMediaStream] = {
-    { PlusMediaManager::e_audioIn,      0, 0, "" },
-    { PlusMediaManager::e_audioOut,     0, 0, "" },
-    { PlusMediaManager::e_videoIn,      0, 0, defVideoFormat },
-    { PlusMediaManager::e_videoOut,     0, 0, defVideoFormat },
-    { PlusMediaManager::e_contentIn,    0, 0, defVideoFormat },
-    { PlusMediaManager::e_contentOut,   0, 0, defVideoFormat },
-    { PlusMediaManager::e_localVideoOut,0, 0, defVideoFormat }
+    { PlusMediaManager::e_audioIn,       8000,      2,              "", 1, 20 },
+    { PlusMediaManager::e_audioOut,      8000,      2,              "", 1, 20 },
+    { PlusMediaManager::e_videoIn,        352,    288,  defVideoFormat, 0,  0 },
+    { PlusMediaManager::e_videoOut,         0,      0,  defVideoFormat, 0,  0 },
+    { PlusMediaManager::e_contentIn,      352,    288,  defVideoFormat, 0,  0 },
+    { PlusMediaManager::e_contentOut,       0,      0,  defVideoFormat, 0,  0 },
+    { PlusMediaManager::e_localVideoOut,    0,      0,  defVideoFormat, 0,  0 }
 };
 
 
@@ -71,7 +73,8 @@ PlusMediaManager::PlusMediaManager()
 {
     // Initialise the manager
     for (unsigned i = 0; i < e_NoOfMediaStream; ++i) {
-        m_queueMedia.insert(make_pair(defaultMedia[i].id, Queue(defaultMedia[i].width, defaultMedia[i].height, defaultMedia[i].format)));
+        m_queueMedia.insert(make_pair(defaultMedia[i].id, Queue(defaultMedia[i].v1, defaultMedia[i].v2, 
+                                                                defaultMedia[i].v3, defaultMedia[i].v4, defaultMedia[i].v5)));
     }
 }
 
@@ -84,14 +87,14 @@ PlusMediaManager::Sample::Sample(void * data, unsigned size, unsigned width, uns
 
 
 PlusMediaManager::Queue::Queue()
-: m_width(0), m_height(0), m_format(""), m_shutdown(false)
+: m_v1(0), m_v2(0), m_v3(""), m_shutdown(false)
 {
 
 }
 
 
-PlusMediaManager::Queue::Queue(unsigned width, unsigned height, const PString & format)
-: m_width(width), m_height(height), m_format(format), m_shutdown(false)
+PlusMediaManager::Queue::Queue(unsigned v1, unsigned v2, const PString & v3, unsigned v4, unsigned v5)
+: m_v1(v1), m_v2(v2), m_v3(v3), m_v4(v4), m_v5(v5), m_shutdown(false)
 {
 
 }
@@ -110,14 +113,46 @@ PStringArray PlusMediaManager::SupportedFormats(unsigned dir)
 
         case e_videoIn:
         case e_contentIn:
-            return Serialise(H323ColourConverter::GetColourConverterList(m_queueMedia[e_videoIn].m_format, false));
+            return Serialise(H323ColourConverter::GetColourConverterList(m_queueMedia[e_videoIn].m_v3, false));
 
         case e_videoOut:
         case e_contentOut:
-            return Serialise(H323ColourConverter::GetColourConverterList(m_queueMedia[e_videoOut].m_format, true));
+            return Serialise(H323ColourConverter::GetColourConverterList(m_queueMedia[e_videoOut].m_v3, true));
         default:
             return "";
     }
+}
+
+void PlusMediaManager::SetAudioFormat(unsigned sampleRate, unsigned bytesPerSample, unsigned noChannels, unsigned sampleTime)
+{
+    SetAudioFormat(PlusMediaManager::e_audioIn,  sampleRate, bytesPerSample, noChannels, sampleTime);
+    SetAudioFormat(PlusMediaManager::e_audioOut, sampleRate, bytesPerSample, noChannels, sampleTime);
+}
+
+PBoolean PlusMediaManager::SetAudioFormat(unsigned id, unsigned sampleRate, unsigned bytesPerSample, unsigned noChannels, unsigned sampleTime)
+{
+    if (id > e_audioOut)
+        return false;
+
+    Queue & q = m_queueMedia[id];
+        q.m_v1 = sampleRate;
+        q.m_v2 = bytesPerSample;
+        q.m_v4 = noChannels;
+        q.m_v5 = sampleTime;
+
+    return true;
+}
+
+void PlusMediaManager::GetAudioFormat(unsigned id, unsigned & sampleRate, unsigned & bytesPerSample, unsigned & noChannels, unsigned & sampleTime)
+{
+    if (id > e_audioOut)
+        return;
+
+    Queue & q = m_queueMedia[id];
+        sampleRate    = q.m_v1;
+        bytesPerSample= q.m_v2;
+        noChannels    = q.m_v4;
+        sampleTime    = q.m_v5;
 }
 
 
@@ -126,7 +161,7 @@ void PlusMediaManager::GetColourFormat(unsigned id, PString & colourFormat)
     if (id >= e_NoOfMediaStream)
         return;
 
-    colourFormat = m_queueMedia[id].m_format;
+    colourFormat = m_queueMedia[id].m_v3;
 }
 
 
@@ -138,7 +173,7 @@ PBoolean PlusMediaManager::SetColourFormat(unsigned id, const PString & colourFo
 
     Queue & q = m_queueMedia[id];
         q.m_mutex.Wait();
-            q.m_format = colourFormat;
+            q.m_v3 = colourFormat;
         q.m_mutex.Signal();
 
     return true;
@@ -164,9 +199,9 @@ PBoolean PlusMediaManager::GetFrameSize(unsigned id, unsigned & width, unsigned 
         return false;
 
     Queue & q = m_queueMedia[id];
-    width = q.m_width;
-    height = q.m_height;
-    return (q.m_width > 0 && q.m_height > 0);
+    width = q.m_v1;
+    height = q.m_v2;
+    return (q.m_v1 > 0 && q.m_v2 > 0);
 }
 
 
@@ -176,8 +211,8 @@ PBoolean PlusMediaManager::SetFrameSize(unsigned id, unsigned width, unsigned he
         return false;
 
     Queue & q = m_queueMedia[id];
-    q.m_width = width;
-    q.m_height = height;
+    q.m_v1 = width;
+    q.m_v2 = height;
     return true;
 }
 
@@ -208,6 +243,36 @@ bool PlusMediaManager::Write(unsigned id, void * data, unsigned size, unsigned w
     return true;
 }
 
+bool PlusMediaManager::Read(unsigned id, bool toBlock, void * data, unsigned size)
+{
+    if (id > e_audioOut)
+        return false;
+
+    Queue & q = m_queueMedia[id];
+
+    if (!toBlock) {
+        if (!q.size()) return false;
+    }
+    else {
+        while (!q.m_shutdown && !q.size())
+            PThread::Sleep(3);
+    }
+
+    bool success = false;
+    q.m_mutex.Wait();
+    Sample & media = q.front();
+
+    if (size > (unsigned)media.GetSize()) {
+        PTRACE(2, "PLUSAUD\tMedia size is " << media.GetSize() << " expecting " << size);
+    } else {
+        memcpy(data, media.GetPointer(), size);
+        success = true;
+    }
+    q.pop();
+    q.m_mutex.Signal();
+
+    return success;
+}
 
 bool PlusMediaManager::Read(unsigned id, bool toBlock, void * data, unsigned & size, unsigned & width, unsigned & height)
 {

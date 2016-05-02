@@ -321,6 +321,7 @@ void PlusProcess::InternalDoMethod(Method id, const PString & p1, const PString 
         PlusProcessMethod(stop) 
         PlusProcessMethod(dhParameters)
         PlusProcessMethod(videosize)
+        PlusProcessMethod(audioformat)
         PlusProcessMethod(userMethod)
         // IMPL: Method Names Here
         default: break;

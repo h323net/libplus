@@ -147,6 +147,7 @@ libAndroidMethod(realTimeTextNewLine)
 libAndroidMethod1(secondCall)
 libAndroidMethod(stop)
 libAndroidMethod3(videosize)
+liAndroidMethod4(audioformat)
 libAndroidMethod(dhParameters)
 // IMPL: Method Names Here
 

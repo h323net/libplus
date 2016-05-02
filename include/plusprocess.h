@@ -146,6 +146,7 @@ public:
         e_stop,
         e_dhParameters,
         e_videosize,
+        e_audioformat,
         e_userMethod = 1000
         // IMPL: Method Names Here
     };

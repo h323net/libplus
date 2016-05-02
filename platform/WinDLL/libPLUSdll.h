@@ -162,6 +162,7 @@ public:
     libDLLMethod1(secondCall)
     libDLLMethod0(stop)
     libDLLMethod3(videosize)
+    libDLLMethod4(audioformat)
     libDLLMethod0(dhParameters)
     // IMPL: Method Names here
 

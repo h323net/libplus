@@ -302,6 +302,7 @@ namespace libplus {
             libNETMethod0(stop)
             libNETMethod0(dhParameters)
             libNETMethod3(videosize)
+            libNETMethod4(audioformat)
             // IMPL: Method Names here
 
             // Events
