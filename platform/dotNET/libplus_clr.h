@@ -75,6 +75,7 @@ public:
     libNETCLR(duplicate)
     libNETCLR1(forwardCall)
     libNETCLR1(dhGenerate)
+    libNETCLR2(mediastart)
     // IMPL: Event Names here
 
 protected:
@@ -213,6 +214,7 @@ namespace libplus {
     libNETEventDel(duplicate)
     libNETEventDel1(forwardCall)
     libNETEventDel1(dhGenerate)
+    libNETEventDel2(mediastart)
     // IMPL: Event Names here
 
 	public ref class libPLUS
@@ -321,7 +323,8 @@ namespace libplus {
             libNETEvent1(presenceSupport)
             libNETEvent(duplicate)
             libNETEvent1(forwardCall)
-            libNETEvent1(dhGenerate);
+            libNETEvent1(dhGenerate)
+            libNETEvent2(mediastart)
             // IMPL: Event Names here
 
         protected:
@@ -347,6 +350,7 @@ namespace libplus {
                 libNETInitial(duplicate)
                 libNETInitial(forwardCall)
                 libNETInitial(dhGenerate)
+                libNETInitial(mediastart)
                 // IMPL: Event Names here
             }
 

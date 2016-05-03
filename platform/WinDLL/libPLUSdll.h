@@ -185,6 +185,7 @@ public:
         e_duplicate,
         e_forwardcall,
         e_dhGenerate,
+        e_mediastart,
         e_userEvent = 1000
         // IMPL: Event Names Here
     };
@@ -211,6 +212,7 @@ public:
     libDLLEvent(duplicate)
     libDLLEvent1(forwardCall)
     libDLLEvent1(dhGenerate)
+    libDLLEvent2(mediastart)
     // IMPL: Event Names here
 
     // Media

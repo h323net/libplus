@@ -42,6 +42,7 @@ void mylibPLUS::InitialiseQT()
     //dovideosize(std::to_string((long)libPLUS::videoOut).c_str(),"352","288");
 }
 
+
 bool mylibPLUS::HandleEvent(int id, const char * str1, const char * str2,
                                     const char * str3, const char * str4)
 {
@@ -53,8 +54,10 @@ bool mylibPLUS::HandleEvent(int id, const char * str1, const char * str2,
      case e_callerid:
      case e_incomingcall:
      case e_incall:
+     case e_mediastart:
         m_window->OnLibPlusEvent(id,str1, str2, str3, str4);
         break;
+
      default:
         return true;
     }

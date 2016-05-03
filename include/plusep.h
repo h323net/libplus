@@ -66,6 +66,7 @@ public:
         unsigned m_v5;   // Audio SampleTime        Video NA
 
         PMutex   m_mutex;
+        bool     m_isRunning;
         bool     m_shutdown;
     };
 
@@ -80,6 +81,10 @@ public:
 
     virtual PBoolean SetColourFormat(unsigned id, const PString & colourFormat);
     virtual void     GetColourFormat(unsigned id, PString & colourFormat);
+
+    virtual PBoolean Start(unsigned id);
+    virtual PBoolean Stop(unsigned id);
+    virtual PBoolean IsRunning(unsigned id);
 
     virtual void SetVideoFormat(H323Channel::Directions dir, const PString & colourFormat);
 
@@ -264,20 +269,21 @@ public:
     // Event macros
     PlusEvent2(status);
     //PlusEvent1(notused1);
-    PlusEvent1(isinitialised);
-    PlusEvent1(callerid);
-    PlusEvent1(incomingcall);
-    PlusEvent1(incall);
-    PlusEvent1(encryption);
-    PlusEvent1(ish281call);
-    PlusEvent1(ist140call);
-    PlusEvent1(ish284call);
-    PlusEvent1(isusere164);
-    PlusEvent1(isuseruri);
-    PlusEvent1(presence);
-    PlusEvent(duplicate);
-    PlusEvent1(forwardcall);
-    PlusEvent1(dhGenerate);
+    PlusEvent1(isinitialised)
+    PlusEvent1(callerid)
+    PlusEvent1(incomingcall)
+    PlusEvent1(incall)
+    PlusEvent1(encryption)
+    PlusEvent1(ish281call)
+    PlusEvent1(ist140call)
+    PlusEvent1(ish284call)
+    PlusEvent1(isusere164)
+    PlusEvent1(isuseruri)
+    PlusEvent1(presence)
+    PlusEvent(duplicate)
+    PlusEvent1(forwardcall)
+    PlusEvent1(dhGenerate)
+    PlusEvent2(mediastart)
     // IMPL: Event Names here
 
 
@@ -293,6 +299,7 @@ public:
     virtual void OnCallClearing(H323Connection * connection, H323Connection::CallEndReason reason);
     virtual void OnConnectionCleared(H323Connection & connection, const PString & clearedCallToken);
     virtual PBoolean OnIncomingCall(H323Connection & connection, const H323SignalPDU & setupPDU, H323SignalPDU &);
+    virtual void OnClosedLogicalChannel(H323Connection & connection, const H323Channel & channel);
     virtual H323Connection::AnswerCallResponse OnAnswerCall(H323Connection &, const PString &, const H323SignalPDU &, H323SignalPDU &);
     virtual void SetVendorIdentifierInfo(H225_VendorIdentifier & info) const;
     virtual PBoolean STUNNatType(int type);
@@ -410,6 +417,7 @@ private:
     PlusProcess & m_process;                    // Process for callbacks
 
     PString     m_currentCallToken;             // Current call token Not empty when on a call
+    bool        m_activeCall;                   // Whether there is an active call going on
 
     PString     m_configFile;                   // Configuration File
     PStringList m_configList;                   // Configuration List

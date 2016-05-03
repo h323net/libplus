@@ -16,13 +16,15 @@ SOURCES += main.cpp\
         mainwindow.cpp \
         myglwidget.cpp \
     mylibplus.cpp \
-    videowidgetsurface.cpp
+    videowidgetsurface.cpp \
+    myaudiodevices.cpp
 
 HEADERS  += mainwindow.h \
         myglwidget.h \
     myglwidget.h \
     mylibplus.h \
-    videowidgetsurface.h
+    videowidgetsurface.h \
+    myaudiodevices.h
 
 FORMS    += mainwindow.ui
 

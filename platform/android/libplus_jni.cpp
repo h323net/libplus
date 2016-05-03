@@ -243,6 +243,11 @@ libAndroidSetting(encryptMediaHigh)
     if (mid != NULL) \
         m_eventMap.insert(std::make_pair(PLUSdevice::e_##name,mid));
 
+#define JNI_EVENTMAP2(name) \
+    mid = env->GetMethodID(cls, JNI_JOIN(on,name), "(Ljava/lang/String;Ljava/lang/String;)V"); \
+    if (mid != NULL) \
+        m_eventMap.insert(std::make_pair(PLUSdevice::e_##name,mid));
+
 #define JNI_EVENTMEDIA(name) \
     mid = env->GetMethodID(cls, JNI_JOIN(out,name), "([BI)V"); \
     if (mid != NULL) \
@@ -270,7 +275,7 @@ JNI_PLUSdevice::JNI_PLUSdevice(JNIEnv* env, jobject obj)
     jmethodID mid;
 
     // Load the event map
-    JNI_EVENTMAP1(status)
+    JNI_EVENTMAP2(status)
     JNI_EVENTMAP1(isinitialised)
     //JNI_EVENTMAP1(notused1)
     JNI_EVENTMAP1(callerid)
@@ -286,6 +291,7 @@ JNI_PLUSdevice::JNI_PLUSdevice(JNIEnv* env, jobject obj)
     JNI_EVENTMAP1(duplicate)
     JNI_EVENTMAP1(forwardCall)
     JNI_EVENTMAP1(dhGenerate)
+    JNI_EVENTMAP2(mediastart)
     // IMPL: Event Names here
 
     JNI_EVENTMEDIA(audio)

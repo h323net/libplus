@@ -154,6 +154,7 @@ public:
         e_duplicate,
         e_forwardCall,
         e_dhGenerate,
+        e_mediastart,
         e_userDefinedEvent = 1000 
         // IMPL: Event Names Here
     };

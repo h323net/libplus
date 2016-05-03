@@ -62,6 +62,7 @@ void CLR_PLUSdevice::Event(int evtID, const char * p1, const char * p2, const ch
         libNETEVT(duplicate)
         libNETEVT1(forwardCall)
         libNETEVT1(dhGenerate);
+        libNETEVT2(mediastart);
         // IMPL: Event Names here
         default: break;
     }

@@ -74,7 +74,8 @@ public:
             libDLLEvtOpt1(presenceSupport)
             libDLLEvtOpt(duplicate)
             libDLLEvtOpt1(forwardCall)
-            libDLLEvtOpt1(dhGenerate);
+            libDLLEvtOpt1(dhGenerate)
+            libDLLEvtOpt2(mediastart)
             // IMPL: Event Names here
             default: break;
         }
@@ -256,7 +257,8 @@ libDLLEvtBody1(URIaddressEvent)
 libDLLEvtBody1(presenceSupport)
 libDLLEvtBody(duplicate)
 libDLLEvtBody1(forwardCall)
-libDLLEvtBody1(dhGenerate);
+libDLLEvtBody1(dhGenerate)
+libDLLEvtBody2(mediastart)
 // IMPL: Event Names here
 
 

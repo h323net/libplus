@@ -52,6 +52,30 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+void MainWindow::OnLibPlusMediaEvent(int stream, bool start)
+{
+    QString dir;
+
+    switch (stream) {
+        case libPLUS::audioIn:
+            dir = QString("AudioIn");
+            break;
+        case libPLUS::audioOut:
+            dir = QString("AudioOut");
+            break;
+        case libPLUS::videoIn:
+            dir = QString("VideoIn");
+            break;
+        case libPLUS::videoOut:
+            dir = QString("VideoOut");
+            break;
+        break;
+    }
+
+    qDebug() << dir << (start ? "Starting." : "Stopping.");
+}
+
 ////////////////////////////////////////////////////////
 // Event handling
 
@@ -105,10 +129,12 @@ bool MainWindow::ProcessEvents()
                 SetInCall(success);
                 break;
             case libPLUS::e_callerid:
-
+                break;
             case libPLUS::e_incomingcall:
-
-               break;
+                break;
+            case libPLUS::e_mediastart:
+                OnLibPlusMediaEvent(QString(evt.str1).toInt(), QString(evt.str2).toInt());
+                break;
             default:
                break;
         }

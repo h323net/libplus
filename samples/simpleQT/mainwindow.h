@@ -91,6 +91,9 @@ protected:
     void SetInCall(bool inCall);
     void LoadDisplaySettings();
 
+
+    void OnLibPlusMediaEvent(int stream, bool start);
+
 private:
     Ui::MainWindow *ui;
 

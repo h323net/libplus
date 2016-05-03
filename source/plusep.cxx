@@ -94,7 +94,7 @@ PlusMediaManager::Queue::Queue()
 
 
 PlusMediaManager::Queue::Queue(unsigned v1, unsigned v2, const PString & v3, unsigned v4, unsigned v5)
-: m_v1(v1), m_v2(v2), m_v3(v3), m_v4(v4), m_v5(v5), m_shutdown(false)
+: m_v1(v1), m_v2(v2), m_v3(v3), m_v4(v4), m_v5(v5), m_isRunning(false), m_shutdown(false)
 {
 
 }
@@ -192,6 +192,39 @@ void PlusMediaManager::SetVideoFormat(H323Channel::Directions dir, const PString
     }
 }
 
+PBoolean PlusMediaManager::Start(unsigned id)
+{
+    if (id >= e_NoOfMediaStream)
+        return false;
+
+    m_queueMedia[id].m_isRunning = true;
+    return true;
+}
+
+PBoolean PlusMediaManager::Stop(unsigned id)
+{
+    if (id >= e_NoOfMediaStream)
+        return false;
+
+    Queue & q = m_queueMedia[id];
+
+    q.m_isRunning = false;
+
+    q.m_mutex.Wait();
+        while (!q.size())
+            q.pop();
+    q.m_mutex.Signal();
+    return true;
+}
+
+PBoolean PlusMediaManager::IsRunning(unsigned id)
+{
+    if (id >= e_NoOfMediaStream)
+        return false;
+
+    return m_queueMedia[id].m_isRunning;
+}
+
 
 PBoolean PlusMediaManager::GetFrameSize(unsigned id, unsigned & width, unsigned & height)
 {
@@ -235,6 +268,9 @@ bool PlusMediaManager::Write(unsigned id, void * data, unsigned size, unsigned w
         return false;
 
     Queue & q = m_queueMedia[id];
+
+    if (!q.m_isRunning)
+        return true;
 
     q.m_mutex.Wait();
         q.push(Sample(data, size, width, height));
@@ -447,7 +483,8 @@ PlusEndPoint::PlusEndPoint(PlusProcess & process, H323DataStore & _data)
 #else
 PlusEndPoint::PlusEndPoint(PlusProcess & process)
 #endif
-:  m_process(process), m_currentCallToken(PString()), m_stunType(0), m_endpointIsSetup(false), m_libPath(PProcess::Current().GetFile().GetDirectory())
+:  m_process(process), m_currentCallToken(PString()), m_activeCall(false), m_stunType(0), 
+   m_endpointIsSetup(false), m_libPath(PProcess::Current().GetFile().GetDirectory())
 #ifdef H323_DATASTORE
    ,m_dataStore(_data)
 #endif
@@ -556,6 +593,8 @@ void PlusEndPoint::OnConnectionEstablished(H323Connection & connection,
     m_currentCallToken = token;
     FireStatus(uiCallInProgress);
     PTRACE(2, "EP\tIn call with " << connection.GetRemotePartyName());
+
+    m_activeCall = true;
 }
 
 
@@ -585,8 +624,53 @@ void PlusEndPoint::OnCallClearing(H323Connection * connection,
     fire_encryption("0");
     fire_incall("0");
 
+    m_activeCall = false;
+
+    // Fire to stop sending media...
+    // Needs to be done here as the media channels may take a few seconds
+    // to actually shutdown but we want to end the media ASAP.
+    if (m_curdrvaudiorec == "External")
+        fire_mediastart(PString(PlusMediaManager::e_audioIn), "0");
+
+    if (m_curdrvaudioplay == "External")
+        fire_mediastart(PString(PlusMediaManager::e_audioOut), "0");
+
+    if (m_curdrvvideorec == "External")
+        fire_mediastart(PString(PlusMediaManager::e_videoIn), "0");
+
+    if (m_curdrvvideoplay == "External")
+        fire_mediastart(PString(PlusMediaManager::e_videoOut), "0");
+      
     if (reason < H323Connection::NumCallEndReasons)
         FireStatus(reason + 6);
+}
+
+void PlusEndPoint::OnClosedLogicalChannel(H323Connection & /*connection*/, const H323Channel & channel)
+{
+    unsigned id = channel.GetSessionID();
+    H323Channel::Directions dir = channel.GetDirection();
+    bool isEncoding = (dir == H323Channel::IsTransmitter);
+
+    PTRACE(2, "EP\tClosing channel " << id << " " << (isEncoding ? "encoder " : "decoder "));
+
+    if (!m_activeCall)
+        return;
+
+    if (id == RTP_Session::DefaultAudioSessionID) {
+        if (isEncoding && m_curdrvaudiorec == "External")
+            fire_mediastart(PString(PlusMediaManager::e_audioIn), "0");
+        else if (m_curdrvaudioplay == "External")
+            fire_mediastart(PString(PlusMediaManager::e_audioOut), "0");
+    }
+
+    if (id == RTP_Session::DefaultVideoSessionID) {
+        if (isEncoding && m_curdrvvideorec == "External")
+            fire_mediastart(PString(PlusMediaManager::e_videoIn), "0");
+        else if (m_curdrvvideoplay == "External")
+            fire_mediastart(PString(PlusMediaManager::e_videoOut), "0");
+    }
+
+
 }
 
 PBoolean PlusEndPoint::OnIncomingCall(H323Connection & connection,
@@ -595,6 +679,7 @@ PBoolean PlusEndPoint::OnIncomingCall(H323Connection & connection,
 {  	
     return true;
 }
+
 
 H323Connection::AnswerCallResponse
                    PlusEndPoint::OnAnswerCall(H323Connection & connection,
@@ -645,19 +730,28 @@ PBoolean PlusEndPoint::OpenAudioChannel(H323Connection & connection,
                                           H323AudioCodec & codec)
 {
 
-  PTRACE(2,"AUDIO\tOpening audio channel " << (isEncoding ? "encoder " : "decoder ")
-       << (isEncoding ? m_audiorec : m_audioplay ) );
+  PString deviceDriver = isEncoding ? m_curdrvaudiorec : m_curdrvaudioplay;
+  PString deviceName = isEncoding ? m_audiorec : m_audioplay;
 
-  if (isEncoding) {
-      SetSoundChannelRecordDriver(m_curdrvaudiorec);
-      SetSoundChannelRecordDevice(m_audiorec);
-  }
-  else {
-      SetSoundChannelPlayDriver(m_curdrvaudioplay);
-      SetSoundChannelPlayDevice(m_audioplay);
-  }
+  bool isExternal = (deviceDriver == "External");
+
+  PTRACE(2,"AUDIO\tOpening audio channel " << (isEncoding ? "encoder " : "decoder ")
+       << deviceName);
 
   codec.SetSilenceDetectionMode(H323AudioCodec::NoSilenceDetection);
+
+  if (isEncoding) {
+      SetSoundChannelRecordDriver(deviceDriver);
+      SetSoundChannelRecordDevice(deviceName);
+      if (isExternal)
+          fire_mediastart(PString(PlusMediaManager::e_audioIn), "1");
+  }
+  else {
+      SetSoundChannelPlayDriver(deviceDriver);
+      SetSoundChannelPlayDevice(deviceName);
+      if (isExternal)
+          fire_mediastart(PString(PlusMediaManager::e_audioOut), "1");
+  }
 
   return H323EndPoint::OpenAudioChannel(connection, isEncoding, bufferSize, codec);
 
@@ -669,6 +763,8 @@ PBoolean PlusEndPoint::OpenVideoChannel(H323Connection & connection, PBoolean is
 
     PString deviceDriver = isEncoding ? m_curdrvvideorec : m_curdrvvideoplay;
     PString deviceName   = isEncoding ? m_videorec : m_videoplay;
+
+    bool isExternal = (deviceDriver == "External");
 
     PTRACE(2, "VID\tOpening video channel " << (isEncoding ? "encoder" : "decoder") 
                     << " using driver: " << deviceDriver << " device: " << deviceName);
@@ -684,6 +780,13 @@ PBoolean PlusEndPoint::OpenVideoChannel(H323Connection & connection, PBoolean is
     if (!device) {
         PTRACE(1, "Failed to instance video device \"" << deviceName << '"');
         return false;
+    }
+
+    if (isExternal) {
+        if (isEncoding && PIsDescendant(device, PVideoInputDevice_External))
+            ((PVideoInputDevice_External*)device)->AttachManager(PlusMediaManager::e_videoIn, &m_mediaManager);
+        else if (PIsDescendant(device, PVideoOutputDevice_External))
+            ((PVideoOutputDevice_External*)device)->AttachManager(PlusMediaManager::e_videoOut, &m_mediaManager);
     }
 
     if (isEncoding) {
@@ -707,10 +810,6 @@ PBoolean PlusEndPoint::OpenVideoChannel(H323Connection & connection, PBoolean is
             codec.SetSupportedFormats(videoCaps.framesizes);
         }
     }
-    else {
-        if (PIsDescendant(device, PVideoOutputDevice_External))
-            ((PVideoOutputDevice_External*)device)->AttachManager(PlusMediaManager::e_videoOut, &m_mediaManager);
-    }
 
     if (!device->SetFrameSize(codec.GetWidth(), codec.GetHeight()) ||
         !device->SetFrameRate(codec.GetFrameRate()) ||
@@ -729,11 +828,17 @@ PBoolean PlusEndPoint::OpenVideoChannel(H323Connection & connection, PBoolean is
 #endif
 
     PVideoChannel * channel = new PVideoChannel;
-
     if (isEncoding)
         channel->AttachVideoReader((PVideoInputDevice *)device);
     else
         channel->AttachVideoPlayer((PVideoOutputDevice *)device);
+
+    if (isExternal) {
+        if (isEncoding)
+            fire_mediastart(PString(PlusMediaManager::e_videoIn), "1");
+        else
+            fire_mediastart(PString(PlusMediaManager::e_videoOut), "1");
+    }
 
     return codec.AttachChannel(channel, TRUE);
 }

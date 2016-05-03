@@ -42,7 +42,7 @@ public class libPLUSandroid extends Activity
 	 * Events
 	 * Override these functions to receive events
 	 */
-    public void onstatus(String val) {}
+    public void onstatus(String val1, String val2) {}
     public void onisinitialised(String val) {}
     public void onvideoframe(String val) {}
     public void oncallerid(String val) {}
@@ -58,6 +58,7 @@ public class libPLUSandroid extends Activity
     public void onduplicate(String notused) {}
     public void onforwardCall(String val) {}
     public void ondhGenerate(String val) {}
+    public void onmediastart(String val1, String val2) {}
     // IMPL: Event Names here
 
 	/*

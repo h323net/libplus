@@ -45,6 +45,8 @@ class mylibPLUS  : public libPLUS
     // Media Handling
     virtual bool outvideo(const void * data, int size, int width=0, int height=0);
 
+  protected:
+
   private:
     MainWindow * m_window;
 
